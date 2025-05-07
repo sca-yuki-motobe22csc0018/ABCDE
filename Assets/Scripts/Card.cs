@@ -4,6 +4,7 @@ using DG.Tweening;
 public class Card : MonoBehaviour
 {
     public GameObject card;
+    public GameObject thisHand;
     public  SpriteRenderer rend;
     public  int thisLayer;
     int upLayer=120;
@@ -43,11 +44,11 @@ public class Card : MonoBehaviour
         }
         else
         {
-            if (currentHitObject != null)
-            {
-                MouseExit();
-                currentHitObject = null;
-            }
+            //if (currentHitObject != null)
+            //{
+            //    MouseExit();
+            //    currentHitObject = null;
+            //}
         }
     }
 
