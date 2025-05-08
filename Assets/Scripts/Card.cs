@@ -44,11 +44,11 @@ public class Card : MonoBehaviour
         }
         else
         {
-            //if (currentHitObject != null)
-            //{
-            //    MouseExit();
-            //    currentHitObject = null;
-            //}
+            if (currentHitObject != null)
+            {
+                MouseExit();
+                currentHitObject = null;
+            }
         }
     }
 

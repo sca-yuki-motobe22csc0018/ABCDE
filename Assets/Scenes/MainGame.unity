@@ -194,6 +194,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 10564278}
   m_CullTransparentMesh: 1
+--- !u!1 &40368579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 40368581}
+  - component: {fileID: 40368580}
+  m_Layer: 0
+  m_Name: HandPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &40368580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40368579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c55715b80ad7ba84d9be596dbcf08b0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetObjectNames:
+  - Card1
+  - Card2
+  - Card3
+  - Card4
+  - Card5
+  - Card6
+  - Card7
+  - Card8
+  - Card9
+  - Card10
+  Hand: {fileID: 2129335216}
+--- !u!4 &40368581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40368579}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -3.75, z: 0}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 2129335217}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &41068500
 GameObject:
   m_ObjectHideFlags: 0
@@ -7019,9 +7076,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2129335216}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -3.5, z: 0}
-  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 80637402}
@@ -7034,7 +7091,7 @@ Transform:
   - {fileID: 776558614}
   - {fileID: 1323729907}
   - {fileID: 1911787044}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 40368581}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &2129335218
 BoxCollider2D:
@@ -7165,7 +7222,7 @@ SceneRoots:
   - {fileID: 758822647}
   - {fileID: 603426779}
   - {fileID: 78999780}
-  - {fileID: 2129335217}
+  - {fileID: 40368581}
   - {fileID: 1321657476}
   - {fileID: 894345330}
   - {fileID: 1524932958}
