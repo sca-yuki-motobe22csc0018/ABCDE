@@ -9,10 +9,16 @@ public class Card : MonoBehaviour
     public  int thisLayer;
     int upLayer=120;
     private GameObject currentHitObject = null;
-    public string targetObjectName = "Card3"; // 対象のオブジェクト名
+    public string targetObjectName; // 対象のオブジェクト名
+    bool onMouse;
+    bool drag;
+    //private Vector3 offset;
+
     void Start()
     {
         thisLayer = rend.sortingOrder;
+        onMouse=false;
+        drag = false;
     }
 
 
@@ -50,22 +56,47 @@ public class Card : MonoBehaviour
                 currentHitObject = null;
             }
         }
+        if (Input.GetMouseButtonDown(0)&&onMouse)
+        {
+            //offset = card.transform.position - (Vector3)mousePos;
+            drag = true;
+            var sequence = DOTween.Sequence();
+            sequence.Append(card.transform.DOScale(new Vector3(1.75f, 1.75f, 1), 0.1f).SetEase(Ease.InQuint));
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            card.transform.position=this.transform.position;
+            drag = false;
+            var sequence = DOTween.Sequence();
+            sequence.Append(card.transform.DOScale(new Vector3(1, 1, 1), 0.1f).SetEase(Ease.InQuint));
+        }
+        if (drag)
+        {
+            card.transform.position = (Vector3)mousePos;// + offset;
+        }
     }
 
 
     private void MouseEnter()
     {
         rend.sortingOrder = upLayer;
-
-        var sequence = DOTween.Sequence();
-        sequence.Append(card.transform.DOScale(new Vector3(1.2f, 1.2f, 1), 0.1f).SetEase(Ease.InQuint));
-        sequence.Append(card.transform.DOMoveY(this.transform.position.y + 0.5f, 0.1f));
+        onMouse = true;
+        if (!drag)
+        {
+            var sequence = DOTween.Sequence();
+            sequence.Append(card.transform.DOScale(new Vector3(1.2f, 1.2f, 1), 0.1f).SetEase(Ease.InQuint));
+            sequence.Join(card.transform.DOMoveY(this.transform.position.y + 0.5f, 0.1f));
+        }
     }
     void MouseExit()
     {
         rend.sortingOrder = thisLayer;
-        var sequence = DOTween.Sequence();
-        sequence.Append(card.transform.DOScale(new Vector3(1, 1, 1), 0.1f).SetEase(Ease.InQuint));
-        sequence.Append(card.transform.DOMoveY(this.transform.position.y, 0.1f));
+        onMouse = false;
+        if (!drag)
+        {
+            var sequence = DOTween.Sequence();
+            sequence.Append(card.transform.DOScale(new Vector3(1, 1, 1), 0.1f).SetEase(Ease.InQuint));
+            sequence.Join(card.transform.DOMoveY(this.transform.position.y, 0.1f));
+        }
     }
 }
