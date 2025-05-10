@@ -2,37 +2,48 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-[System.Serializable]
-public class CardData
-{
-    public int id;
-    public string name;
-    public int cost;
-    public string description;
-    public string image; // Resources内の画像ファイル名
-}
+
 
 public class CsvLoader : MonoBehaviour
 {
+    [System.Serializable]
+    public class CardData
+    {
+        public int id;
+        public string name;
+        public int type;
+        public string rarity;
+        public int cost;
+        public string text;
+        public string image; // Resources内の画像ファイル名
+    }
+
+    public  List<CardData> cardList = new List<CardData>();
+
     void Start()
     {
-        // StreamingAssetsフォルダのCSVファイルパスを取得
-        string filePath = Path.Combine(Application.streamingAssetsPath, "Card_ata.csv");
+        LoadCSV();
+    }
+    void LoadCSV()
+    {
+        TextAsset csvFile = Resources.Load<TextAsset>("Card_Data");
+        string[] lines = csvFile.text.Split('\n');
 
-        // ファイルを読み込む
-        if (File.Exists(filePath))
+        for (int i = 1; i < lines.Length; i++) // 0行目はヘッダー
         {
-            string[] lines = File.ReadAllLines(filePath);
+            if (string.IsNullOrWhiteSpace(lines[i])) continue;
+            string[] values = lines[i].Split(',');
 
-            foreach (string line in lines)
-            {
-                string[] values = line.Split(',');
-                Debug.Log("ID: " + values[0] + ", Name: " + values[1] + ", Type: " + values[2] + ", Rarity: " + values[3] + ", Cost: " + values[4] + ", Text: " + values[5]);
-            }
-        }
-        else
-        {
-            Debug.LogError("CSVファイルが見つかりませんでした: " + filePath);
+            CardData data = new CardData();
+            data.id = int.Parse(values[0]);
+            data.name = values[1];
+            data.type = int.Parse(values[2]);
+            data.rarity = values[3];
+            data.cost = int.Parse(values[4]);
+            data.text = values[5];
+            data.image = values[6];
+
+            cardList.Add(data);
         }
     }
 }
