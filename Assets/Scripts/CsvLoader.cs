@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 
 public class CsvLoader : MonoBehaviour
@@ -24,8 +25,8 @@ public class CsvLoader : MonoBehaviour
     }
     void LoadCSV()
     {
-        TextAsset csvFile = Resources.Load<TextAsset>("Card_Data");
-        string[] lines = csvFile.text.Split('\n');
+        string path = UnityEngine.Application.streamingAssetsPath + "/Card_Data.csv";
+        string[] lines = File.ReadAllLines(path, Encoding.UTF8);
 
         for (int i = 1; i < lines.Length; i++) // 0行目はヘッダー
         {
@@ -39,7 +40,7 @@ public class CsvLoader : MonoBehaviour
             data.rarity = values[3];
             data.cost = int.Parse(values[4]);
             data.text = values[5];
-            data.image = values[6];
+            //data.image = values[6];
 
             cardList.Add(data);
         }

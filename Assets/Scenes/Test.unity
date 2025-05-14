@@ -119,6 +119,16 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &211250664 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7856753429211726620, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+  m_PrefabInstance: {fileID: 768087517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &378428966 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4242853949734415866, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+  m_PrefabInstance: {fileID: 768087517}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &491797125
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,7 +275,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 654568893}
-  - component: {fileID: 654568892}
   m_Layer: 0
   m_Name: CardController
   m_TagString: Untagged
@@ -273,19 +282,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &654568892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 654568891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64e84b839ba407940966b5cd97b68d7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cardList: []
 --- !u!4 &654568893
 Transform:
   m_ObjectHideFlags: 0
@@ -353,11 +349,63 @@ PrefabInstance:
       propertyPath: m_Name
       value: Card
       objectReference: {fileID: 0}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: Type.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: 'Type.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1745644850}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: 'Type.Array.data[1]'
+      value: 
+      objectReference: {fileID: 211250664}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: 'Type.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1590646065}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: 'Type.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1705162894}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: 'Type.Array.data[4]'
+      value: 
+      objectReference: {fileID: 378428966}
+    - target: {fileID: 6314713217326486106, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+      propertyPath: 'Type.Array.data[5]'
+      value: 
+      objectReference: {fileID: 1224958249}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+--- !u!1 &1224958249 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3889737559515459751, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+  m_PrefabInstance: {fileID: 768087517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1590646065 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3031938026685576548, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+  m_PrefabInstance: {fileID: 768087517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1705162894 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7401456218599337025, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+  m_PrefabInstance: {fileID: 768087517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1745644850 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1199645653950823680, guid: 1b16b855deafea94e8f7d582f1f919e1, type: 3}
+  m_PrefabInstance: {fileID: 768087517}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
