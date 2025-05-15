@@ -61,14 +61,14 @@ public class Card : MonoBehaviour
             //offset = card.transform.position - (Vector3)mousePos;
             drag = true;
             var sequence = DOTween.Sequence();
-            sequence.Append(card.transform.DOScale(new Vector3(1.75f, 1.75f, 1), 0.1f).SetEase(Ease.InQuint));
+            sequence.Append(card.transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.1f).SetEase(Ease.InQuint));
         }
         if (Input.GetMouseButtonUp(0))
         {
             card.transform.position=this.transform.position;
             drag = false;
             var sequence = DOTween.Sequence();
-            sequence.Append(card.transform.DOScale(new Vector3(1, 1, 1), 0.1f).SetEase(Ease.InQuint));
+            sequence.Append(card.transform.DOScale(new Vector3(0.25f, 0.25f, 1), 0.1f).SetEase(Ease.InQuint));
         }
         if (drag)
         {
@@ -84,7 +84,7 @@ public class Card : MonoBehaviour
         if (!drag)
         {
             var sequence = DOTween.Sequence();
-            sequence.Append(card.transform.DOScale(new Vector3(1.2f, 1.2f, 1), 0.1f).SetEase(Ease.InQuint));
+            sequence.Append(card.transform.DOScale(new Vector3(0.3f, 0.3f, 1), 0.1f).SetEase(Ease.InQuint));
             sequence.Join(card.transform.DOMoveY(this.transform.position.y + 0.5f, 0.1f));
         }
     }
@@ -95,7 +95,7 @@ public class Card : MonoBehaviour
         if (!drag)
         {
             var sequence = DOTween.Sequence();
-            sequence.Append(card.transform.DOScale(new Vector3(1, 1, 1), 0.1f).SetEase(Ease.InQuint));
+            sequence.Append(card.transform.DOScale(new Vector3(0.25f, 0.25f, 1), 0.1f).SetEase(Ease.InQuint));
             sequence.Join(card.transform.DOMoveY(this.transform.position.y, 0.1f));
         }
     }

@@ -6,19 +6,18 @@ using UnityEngine.UI; // TextŒ^‚ðŽg‚¤‚½‚ß•K—v
 
 public class CardGenerator : MonoBehaviour
 {
-    public GameObject[] Type;
-    public SpriteRenderer cardSpriteRenderer;
+    public SpriteRenderer imageSpriteRenderer;
+    public SpriteRenderer typeSpriteRenderer;
     public Text costText;
     public Text nameText;
     public Text textText;
-    public int a;
 
     [System.Serializable]
     public class CardData
     {
         public int id;
         public string name;
-        public int type;
+        public string type;
         public string rarity;
         public int cost;
         public string text;
@@ -29,21 +28,38 @@ public class CardGenerator : MonoBehaviour
 
     void Start()
     {
-        LoadCSV();
-        costText.text = cardList[a].cost.ToString();
-        nameText.text = cardList[a].name;
-        textText.text = cardList[a].text;
-        Type[0].SetActive(true);
-        Type[cardList[a].type].SetActive(true);
-        Sprite sprite = Resources.Load<Sprite>(cardList[a].image);
-        if (sprite != null)
+        int cardID = int.Parse(this.name);
+        if (cardID >0)
         {
-            cardSpriteRenderer.sprite = sprite;
+            cardID -= 1;
         }
         else
         {
-            Debug.LogWarning("‰æ‘œ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ: " + cardList[a].image);
+            cardID = 1;
         }
+        LoadCSV();
+        costText.text = cardList[cardID].cost.ToString();
+        nameText.text = cardList[cardID].name;
+        textText.text = cardList[cardID].text;
+        Sprite imageSprite = Resources.Load<Sprite>("CardImages/" + cardList[cardID].image);
+        if (imageSprite != null)
+        {
+            imageSpriteRenderer.sprite = imageSprite;
+        }
+        else
+        {
+            Debug.LogWarning("‰æ‘œ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ: " + cardList[cardID].image);
+        }
+        Sprite typeSprite = Resources.Load<Sprite>("CardTypes/Card_Type_"+ cardList[cardID].type);
+        if (typeSprite != null)
+        {
+            typeSpriteRenderer.sprite = typeSprite;
+        }
+        else
+        {
+            Debug.LogWarning("‰æ‘œ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ: " + cardList[cardID].image);
+        }
+        this.name = cardList[cardID].name;
     }
 
     void LoadCSV()
@@ -60,7 +76,7 @@ public class CardGenerator : MonoBehaviour
             CardData data = new CardData();
             data.id = int.Parse(values[0]);
             data.name = values[1];
-            data.type = int.Parse(values[2]);
+            data.type = values[2];
             data.rarity = values[3];
             data.cost = int.Parse(values[4]);
             data.text = values[5];
