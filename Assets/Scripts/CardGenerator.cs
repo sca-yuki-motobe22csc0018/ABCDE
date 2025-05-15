@@ -7,6 +7,7 @@ using UnityEngine.UI; // Text型を使うため必要
 public class CardGenerator : MonoBehaviour
 {
     public GameObject[] Type;
+    public SpriteRenderer cardSpriteRenderer;
     public Text costText;
     public Text nameText;
     public Text textText;
@@ -21,7 +22,7 @@ public class CardGenerator : MonoBehaviour
         public string rarity;
         public int cost;
         public string text;
-        // public string image; // Resources内の画像ファイル名
+        public string image; // Resources内の画像ファイル名
     }
 
     public List<CardData> cardList = new List<CardData>();
@@ -34,6 +35,15 @@ public class CardGenerator : MonoBehaviour
         textText.text = cardList[a].text;
         Type[0].SetActive(true);
         Type[cardList[a].type].SetActive(true);
+        Sprite sprite = Resources.Load<Sprite>(cardList[a].image);
+        if (sprite != null)
+        {
+            cardSpriteRenderer.sprite = sprite;
+        }
+        else
+        {
+            Debug.LogWarning("画像が見つかりません: " + cardList[a].image);
+        }
     }
 
     void LoadCSV()
@@ -54,7 +64,7 @@ public class CardGenerator : MonoBehaviour
             data.rarity = values[3];
             data.cost = int.Parse(values[4]);
             data.text = values[5];
-            // data.image = values[6];
+            data.image = values[6];
 
             cardList.Add(data);
         }
