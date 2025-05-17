@@ -12,6 +12,7 @@ public class Card : MonoBehaviour
     public string targetObjectName; // 対象のオブジェクト名
     bool onMouse;
     bool drag;
+
     //private Vector3 offset;
 
     void Start()
@@ -58,7 +59,6 @@ public class Card : MonoBehaviour
         }
         if (Input.GetMouseButtonDown(0)&&onMouse)
         {
-            //offset = card.transform.position - (Vector3)mousePos;
             drag = true;
             var sequence = DOTween.Sequence();
             sequence.Append(card.transform.DOScale(new Vector3(0.4f, 0.4f, 1), 0.1f).SetEase(Ease.InQuint));
@@ -72,17 +72,17 @@ public class Card : MonoBehaviour
         }
         if (drag)
         {
-            card.transform.position = (Vector3)mousePos;// + offset;
+            card.transform.position = (Vector3)mousePos;
         }
     }
 
 
     private void MouseEnter()
     {
-        rend.sortingOrder = upLayer;
-        onMouse = true;
         if (!drag)
         {
+            rend.sortingOrder = upLayer;
+            onMouse = true;
             var sequence = DOTween.Sequence();
             sequence.Append(card.transform.DOScale(new Vector3(0.3f, 0.3f, 1), 0.1f).SetEase(Ease.InQuint));
             sequence.Join(card.transform.DOMoveY(this.transform.position.y + 0.5f, 0.1f));
@@ -90,10 +90,10 @@ public class Card : MonoBehaviour
     }
     void MouseExit()
     {
-        rend.sortingOrder = thisLayer;
-        onMouse = false;
         if (!drag)
         {
+            rend.sortingOrder = thisLayer;
+            onMouse = false;
             var sequence = DOTween.Sequence();
             sequence.Append(card.transform.DOScale(new Vector3(0.25f, 0.25f, 1), 0.1f).SetEase(Ease.InQuint));
             sequence.Join(card.transform.DOMoveY(this.transform.position.y, 0.1f));
