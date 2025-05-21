@@ -5,18 +5,16 @@ public class Card : MonoBehaviour
 {
     public GameObject card;
     public GameObject thisHand;
-    public  SpriteRenderer rend;
-    public  int thisLayer;
+    SpriteRenderer rend;
+    public int thisLayer;
     int upLayer=120;
     private GameObject currentHitObject = null;
-    public string targetObjectName; // 対象のオブジェクト名
     bool onMouse;
     bool drag;
 
-    //private Vector3 offset;
-
     void Start()
     {
+        rend= card.GetComponent<SpriteRenderer>();
         thisLayer = rend.sortingOrder;
         onMouse=false;
         drag = false;
@@ -32,7 +30,7 @@ public class Card : MonoBehaviour
         {
             GameObject hitObject = hit.collider.gameObject;
 
-            if (hitObject.name == targetObjectName)
+            if (hitObject == card)
             {
                 if (currentHitObject != hitObject)
                 {

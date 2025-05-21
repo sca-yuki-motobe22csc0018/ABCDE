@@ -353,7 +353,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &78999780
 Transform:
   m_ObjectHideFlags: 0
@@ -422,9 +422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 794240705}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 794240707}
   thisLayer: 0
-  targetObjectName: Card1
 --- !u!212 &80637404
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2412,7 +2410,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &603426779
 Transform:
   m_ObjectHideFlags: 0
@@ -2819,7 +2817,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &758822646
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2938,9 +2936,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 1134974164}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 1134974167}
   thisLayer: 0
-  targetObjectName: Card8
 --- !u!212 &776558616
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3178,9 +3174,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 1524457623}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 1524457625}
   thisLayer: 0
-  targetObjectName: Card2
 --- !u!212 &818578850
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3253,7 +3247,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &882740792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3330,7 +3324,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &894345330
 Transform:
   m_ObjectHideFlags: 0
@@ -3932,9 +3926,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 590011055}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 590011057}
   thisLayer: 0
-  targetObjectName: Card5
 --- !u!212 &1176167847
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4092,7 +4084,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1239355923
 Transform:
   m_ObjectHideFlags: 0
@@ -4286,7 +4278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1321657476
 Transform:
   m_ObjectHideFlags: 0
@@ -4355,9 +4347,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 535041270}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 535041273}
   thisLayer: 0
-  targetObjectName: Card9
 --- !u!212 &1323729909
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4901,7 +4891,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1524932955
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5035,9 +5025,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 1923598239}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 1923598242}
   thisLayer: 0
-  targetObjectName: Card6
 --- !u!212 &1541248187
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5378,9 +5366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 2089654821}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 2089654823}
   thisLayer: 0
-  targetObjectName: Card3
 --- !u!212 &1628927916
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5808,9 +5794,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 297118350}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 297118353}
   thisLayer: 0
-  targetObjectName: Card7
 --- !u!212 &1798718044
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6001,9 +5985,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 367844202}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 367844204}
   thisLayer: 0
-  targetObjectName: Card4
 --- !u!212 &1833157292
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6443,9 +6425,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   card: {fileID: 521296873}
   thisHand: {fileID: 2129335216}
-  rend: {fileID: 521296876}
   thisLayer: 0
-  targetObjectName: Card10
 --- !u!212 &1911787046
 SpriteRenderer:
   m_ObjectHideFlags: 0
