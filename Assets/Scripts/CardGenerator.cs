@@ -62,6 +62,11 @@ public class CardGenerator : MonoBehaviour
         this.name = cardList[cardID].name;
     }
 
+    private void Update()
+    {
+        
+    }
+
     void LoadCSV()
     {
         string path = Application.streamingAssetsPath + "/Card_Data.csv";
