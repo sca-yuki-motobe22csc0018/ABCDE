@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI; // Text型を使うため必要
+using UnityEngine.UI;
 
 public class CardGenerator : MonoBehaviour
 {
@@ -11,6 +11,9 @@ public class CardGenerator : MonoBehaviour
     public Text costText;
     public Text nameText;
     public Text textText;
+
+    public int baseSortingOrder = 0;
+    private int lastSortingOrder = -9999;
 
     [System.Serializable]
     public class CardData
@@ -21,7 +24,7 @@ public class CardGenerator : MonoBehaviour
         public string rarity;
         public int cost;
         public string text;
-        public string image; // Resources内の画像ファイル名
+        public string image;
     }
 
     public List<CardData> cardList = new List<CardData>();
@@ -29,42 +32,77 @@ public class CardGenerator : MonoBehaviour
     void Start()
     {
         int cardID = int.Parse(this.name);
-        if (cardID >0)
-        {
-            cardID -= 1;
-        }
-        else
-        {
-            cardID = 1;
-        }
+        cardID = (cardID > 0) ? cardID - 1 : 1;
+
         LoadCSV();
+
         costText.text = cardList[cardID].cost.ToString();
         nameText.text = cardList[cardID].name;
         textText.text = cardList[cardID].text;
+
         Sprite imageSprite = Resources.Load<Sprite>("CardImages/" + cardList[cardID].image);
         if (imageSprite != null)
-        {
             imageSpriteRenderer.sprite = imageSprite;
-        }
         else
-        {
             Debug.LogWarning("画像が見つかりません: " + cardList[cardID].image);
-        }
-        Sprite typeSprite = Resources.Load<Sprite>("CardTypes/Card_Type_"+ cardList[cardID].type);
+
+        Sprite typeSprite = Resources.Load<Sprite>("CardTypes/Card_Type_" + cardList[cardID].type);
         if (typeSprite != null)
-        {
             typeSpriteRenderer.sprite = typeSprite;
-        }
         else
-        {
-            Debug.LogWarning("画像が見つかりません: " + cardList[cardID].image);
-        }
+            Debug.LogWarning("タイプ画像が見つかりません: " + cardList[cardID].type);
+
         this.name = cardList[cardID].name;
+
+        lastSortingOrder = baseSortingOrder;
+        UpdateChildOrders();
     }
 
     private void Update()
     {
-        
+        if (transform.parent != null)
+        {
+            SpriteRenderer parentRenderer = transform.parent.GetComponent<SpriteRenderer>();
+
+            if (parentRenderer != null)
+            {
+                int parentOrder = parentRenderer.sortingOrder;
+                lastSortingOrder+=parentOrder;
+            }
+        }
+
+        if (baseSortingOrder != lastSortingOrder)
+        {
+            UpdateChildOrders();
+            lastSortingOrder = baseSortingOrder;
+        }
+    }
+
+    void UpdateChildOrders()
+    {
+        foreach (Transform child in transform)
+        {
+            int offset = 0;
+
+            SortingOffset so = child.GetComponent<SortingOffset>();
+            if (so != null)
+            {
+                offset = so.orderOffset;
+            }
+
+            SpriteRenderer sr = child.GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                sr.sortingOrder = baseSortingOrder + offset;
+            }
+
+            Canvas childCanvas = child.GetComponent<Canvas>();
+            if (childCanvas != null)
+            {
+                childCanvas.overrideSorting = true;
+                childCanvas.sortingOrder = baseSortingOrder + offset;
+            }
+        }
     }
 
     void LoadCSV()
@@ -73,10 +111,10 @@ public class CardGenerator : MonoBehaviour
         string csvText = File.ReadAllText(path, Encoding.UTF8);
         List<string[]> rows = ParseCsv(csvText);
 
-        for (int i = 1; i < rows.Count; i++) // 0行目はヘッダー
+        for (int i = 1; i < rows.Count; i++)
         {
             string[] values = rows[i];
-            if (values.Length < 6) continue;
+            if (values.Length < 7) continue;
 
             CardData data = new CardData();
             data.id = int.Parse(values[0]);
@@ -91,7 +129,6 @@ public class CardGenerator : MonoBehaviour
         }
     }
 
-    // セル内改行・カンマ・クォート対応 CSV パーサー
     List<string[]> ParseCsv(string csvText)
     {
         var rows = new List<string[]>();
@@ -106,50 +143,17 @@ public class CardGenerator : MonoBehaviour
 
             if (inQuotes)
             {
-                if (c == '"' && next == '"')
-                {
-                    currentField.Append('"');
-                    i++; // skip next
-                }
-                else if (c == '"')
-                {
-                    inQuotes = false;
-                }
-                else
-                {
-                    currentField.Append(c);
-                }
+                if (c == '"' && next == '"') { currentField.Append('"'); i++; }
+                else if (c == '"') inQuotes = false;
+                else currentField.Append(c);
             }
             else
             {
-                if (c == '"')
-                {
-                    inQuotes = true;
-                }
-                else if (c == ',')
-                {
-                    currentRow.Add(currentField.ToString());
-                    currentField.Clear();
-                }
-                else if (c == '\r' && next == '\n')
-                {
-                    currentRow.Add(currentField.ToString());
-                    rows.Add(currentRow.ToArray());
-                    currentRow = new List<string>();
-                    currentField.Clear();
-                    i++; // skip \n
-                }
-                else if (c == '\n' || c == '\r')
-                {
-                    currentRow.Add(currentField.ToString());
-                    rows.Add(currentRow.ToArray());
-                    currentRow = new List<string>();
-                    currentField.Clear();
-                }
-                else
-                {
-                    currentField.Append(c);
-                }
+                if (c == '"') inQuotes = true;
+                else if (c == ',') { currentRow.Add(currentField.ToString()); currentField.Clear(); }
+                else if (c == '\r' && next == '\n') { currentRow.Add(currentField.ToString()); rows.Add(currentRow.ToArray()); currentRow = new List<string>(); currentField.Clear(); i++; }
+                else if (c == '\n' || c == '\r') { currentRow.Add(currentField.ToString()); rows.Add(currentRow.ToArray()); currentRow = new List<string>(); currentField.Clear(); }
+                else currentField.Append(c);
             }
         }
 

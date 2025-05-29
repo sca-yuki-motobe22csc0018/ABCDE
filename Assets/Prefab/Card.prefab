@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 413773253765329419}
   - component: {fileID: 3991493446805369833}
   - component: {fileID: 6314713217326486106}
-  - component: {fileID: 4303123099332966847}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -65,20 +64,8 @@ MonoBehaviour:
   costText: {fileID: 5292632459776792267}
   nameText: {fileID: 2284423747585996496}
   textText: {fileID: 8074202042311701320}
+  baseSortingOrder: 50
   cardList: []
---- !u!114 &4303123099332966847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 507064939415283640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acc50e8fbb54f6246940d950c5a45f11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  children: []
 --- !u!1 &1199645653950823680
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,6 +76,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2406730404565344006}
   - component: {fileID: 963648323502477789}
+  - component: {fileID: 8880631336632625122}
   m_Layer: 0
   m_Name: Card_Type_N
   m_TagString: Untagged
@@ -166,6 +154,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8880631336632625122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1199645653950823680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151232ea22e8b748ac4e0e4dcc0dc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderOffset: -7
 --- !u!1 &3636101277851441368
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,6 +177,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7817962919202849029}
   - component: {fileID: 576907510773838995}
+  - component: {fileID: 5913911682857983115}
   m_Layer: 0
   m_Name: TextBox
   m_TagString: Untagged
@@ -253,6 +255,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5913911682857983115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3636101277851441368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151232ea22e8b748ac4e0e4dcc0dc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderOffset: -8
 --- !u!1 &4556198410524595216
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,6 +278,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6944752269145055097}
   - component: {fileID: 4529235394131276871}
+  - component: {fileID: 7501058834603325640}
   m_Layer: 0
   m_Name: Card_Type
   m_TagString: Untagged
@@ -340,6 +356,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7501058834603325640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4556198410524595216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151232ea22e8b748ac4e0e4dcc0dc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderOffset: -6
 --- !u!1 &7141184956706400883
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,6 +458,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8649210931622370797}
   - component: {fileID: 1443571255798483640}
+  - component: {fileID: 8571910469000934288}
   m_Layer: 0
   m_Name: Card_Image
   m_TagString: Untagged
@@ -506,6 +536,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8571910469000934288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7803740734006356731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151232ea22e8b748ac4e0e4dcc0dc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderOffset: -9
 --- !u!1 &7916119155333400987
 GameObject:
   m_ObjectHideFlags: 0
@@ -676,6 +719,7 @@ GameObject:
   - component: {fileID: 6279691013423898218}
   - component: {fileID: 1621397582855778313}
   - component: {fileID: 3286311979637715906}
+  - component: {fileID: 169107032328856045}
   m_Layer: 5
   m_Name: CardUI
   m_TagString: Untagged
@@ -768,6 +812,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &169107032328856045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8706612621490470399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151232ea22e8b748ac4e0e4dcc0dc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderOffset: -6
 --- !u!1 &8905740209602249120
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,6 +835,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4960065436458793501}
   - component: {fileID: 7304194339094968135}
+  - component: {fileID: 6222393304779681822}
   m_Layer: 0
   m_Name: Card_Image_Back
   m_TagString: Untagged
@@ -855,3 +913,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6222393304779681822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8905740209602249120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151232ea22e8b748ac4e0e4dcc0dc85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orderOffset: -10
