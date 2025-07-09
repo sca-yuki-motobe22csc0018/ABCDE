@@ -204,6 +204,7 @@ GameObject:
   m_Component:
   - component: {fileID: 40368581}
   - component: {fileID: 40368580}
+  - component: {fileID: 40368582}
   m_Layer: 0
   m_Name: HandPos
   m_TagString: Untagged
@@ -251,6 +252,31 @@ Transform:
   - {fileID: 2129335217}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &40368582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 40368579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39300b84a1006e649840b378080113f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numberOfCards: 0
+  posObj:
+  - {fileID: 80637401}
+  - {fileID: 818578847}
+  - {fileID: 1628927913}
+  - {fileID: 1833157289}
+  - {fileID: 1176167844}
+  - {fileID: 1541248184}
+  - {fileID: 1798718041}
+  - {fileID: 776558613}
+  - {fileID: 1323729906}
+  - {fileID: 1911787043}
+  spacing: 1.5
 --- !u!1 &41068500
 GameObject:
   m_ObjectHideFlags: 0
@@ -6394,7 +6420,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1911787044
 Transform:
   m_ObjectHideFlags: 0
@@ -7090,7 +7116,7 @@ Transform:
   m_GameObject: {fileID: 2129335216}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.75, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
