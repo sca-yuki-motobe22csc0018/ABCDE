@@ -9,7 +9,7 @@ public class TitleManager : MonoBehaviour
     [SerializeField] Text clickStart;//clickstartText
     [SerializeField] Text title;//titleText
     public Sprite[] titleImages; // 画像を複数登録
-    public Image[] targetImages;    // 表示させるImageコンポーネント
+    public Image targetImage;    // 表示させるImageコンポーネント
     //private int centerX = 960;//canvas用中心座標X
     //private int centerY = 540;//canvas用中心座標Y
 
@@ -27,12 +27,12 @@ public class TitleManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (titleImages.Length > 0 && targetImages != null)
+        if (titleImages.Length > 0 && targetImage != null)
         {
             for (int i = 0; i < titleImages.Length; i++) 
             {
                 int index = Random.Range(0, titleImages.Length);
-                targetImages[i].sprite = titleImages[index];
+                targetImage.sprite = titleImages[index];
             }
         }
         Fade();
@@ -61,11 +61,6 @@ public class TitleManager : MonoBehaviour
         Sequence seq = DOTween.Sequence();
         seq.Append(clickStart.DOFade(alpha, alphaTime).SetEase(Ease.InSine));
         seq.SetLoops(loop, LoopType.Yoyo);
-        //Sequence title = DOTween.Sequence();
-        //seq.Append(targetImages[0].transform.DOMoveY(-1080, 2.0f).SetEase(Ease.Linear));
-        //seq.Join(targetImages[1].transform.DOMoveY(-1080, 2.0f).SetEase(Ease.Linear));
-        //seq.Join(targetImages[2].transform.DOMoveY(-1080, 2.0f).SetEase(Ease.Linear));
-        //seq.SetLoops(loop, LoopType.Restart);
     }
 
     void Fade()
@@ -73,7 +68,7 @@ public class TitleManager : MonoBehaviour
         Sequence fade = DOTween.Sequence();
         fade.Append(title.DOFade(titleAlpha, titleTime).SetEase(Ease.InSine));
         fade.Join(clickStart.DOFade(startAlpha, titleTime).SetEase(Ease.InSine));
-        fade.Join(targetImages[0].DOFade(titleImageAlpha, titleTime).SetEase(Ease.InSine));
+        fade.Join(targetImage.DOFade(titleImageAlpha, titleTime).SetEase(Ease.InSine));
         fade.OnComplete(() => TitleMove());
 
     }
