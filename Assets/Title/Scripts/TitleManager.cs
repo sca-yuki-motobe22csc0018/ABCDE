@@ -1,41 +1,33 @@
 using DG.Tweening;
-using NUnit.Framework.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
-    [SerializeField] Text clickStart;//clickstartText
-    [SerializeField] Text title;//titleText
-    //追加
-    public Image frontImage;         // 表面のImage
-    public Image backImage;          // 裏面のImage
-    public Sprite[] cardSprites;     // 表面のイラストたち
-    
-    public GameObject card;//回転するカード
+    [SerializeField] Text clickStart; //clickstartText
+    [SerializeField] Text title;      //titleText
 
-    private int lastIndex = -1;//直前に選ばれたイラストのインデックスを記憶する変数
+    public Image frontImage;          // 表面のImage
+    public Image backImage;           // 裏面のImage
+    public Sprite[] cardSprites;      // 表面のイラストたち
+    public GameObject card;           // 回転するカード
 
+    private int lastIndex = -1;
+    private float clickStartAlpha = 0.2f;
+    private float alphaTime = 1.0f;
+    private int loop = -1;
+    private float titleTime = 1.0f;
+    private float fadeAlpha = 1.0f;
 
-    //ここまで
-
-    //public Sprite[] titleImages; // 表面のイラスト複数登録
-    //public Image targetImage;    // 表示させるImageコンポーネント
-
-    private float clickStartAlpha = 0.2f;//ClickStart用　アルファ値
-    private float alphaTime = 1.0f;//ClickStart用　動きにかかる時間
-
-    private int loop = -1;//ループ
-
-    private float titleTime = 1.0f;//fadeにかかる時間
-    private float fadeAlpha = 1.0f;//fade用アルファ値
-
-    private bool clickCheck = false;//左クリックによるシーン移動誤爆阻止用
+    private bool clickCheck = false;  // 左クリック受付フラグ
+    private bool isRotating = false;  // 回転中フラグ
+    private bool isStopped = false;   // ★クリック後に完全停止したか
+    private Tween rotationTween;      // ★現在の回転Tweenを記録
+    private Tween loopTween;          // ★LoopRotationの遅延呼び出しTweenを記録
 
     void Start()
     {
-        // 最初は表面表示、裏面非表示
         frontImage.enabled = true;
         backImage.enabled = false;
 
@@ -44,27 +36,20 @@ public class TitleManager : MonoBehaviour
         LoopRotation();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //ゲーム終了呼び出し
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             gameEnd();
         }
-        //タイトル見えるまでクリック受付阻止用
-        if (clickCheck)
+
+        // タイトルフェード完了後にクリック受付
+        if (clickCheck && Input.GetKeyDown(KeyCode.Mouse0) && !isStopped)
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                changeScene();
-            }
+            StopAndFlipToBack(); // ★クリックで停止して裏に回転
         }
     }
 
-    /// <summary>
-    /// clickstartの点滅
-    /// </summary>
     void TitleMove()
     {
         clickCheck = true;
@@ -73,9 +58,6 @@ public class TitleManager : MonoBehaviour
         seq.SetLoops(loop, LoopType.Yoyo);
     }
 
-    /// <summary>
-    /// タイトル画面のアルファ値の変化
-    /// </summary>
     void Fade()
     {
         Sequence fade = DOTween.Sequence();
@@ -83,34 +65,33 @@ public class TitleManager : MonoBehaviour
         fade.Join(clickStart.DOFade(fadeAlpha, titleTime).SetEase(Ease.InSine));
         fade.Join(frontImage.DOFade(fadeAlpha, titleTime).SetEase(Ease.InSine));
         fade.OnComplete(() => TitleMove());
-
     }
 
-    /// <summary>
-    /// ディレイ　２秒後にRotateCardを呼ぶ
-    /// </summary>
     private void LoopRotation()
     {
-        DOVirtual.DelayedCall(4f, () =>
+        // ★ ループ自体が停止されていない場合のみ次を呼ぶ
+        if (isStopped) return;
+
+        loopTween = DOVirtual.DelayedCall(4f, () =>
         {
             RotateCard();
         });
     }
-    /// <summary>
-    /// カードを回転させる　ChangeRandomSpriteを途中で呼ぶ
-    /// </summary>
+
     private void RotateCard()
     {
+        if (isStopped) return; // ★停止後なら動かさない
+
         float duration = 0.5f;
         bool spriteChanged = false;
+        isRotating = true;
 
-        card.transform.DORotate(new Vector3(0, 360, 0), duration, RotateMode.FastBeyond360)
+        rotationTween = card.transform.DORotate(new Vector3(0, 360, 0), duration, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear)
             .OnUpdate(() =>
             {
                 float yRotation = card.transform.eulerAngles.y;
 
-                // 裏面表示：90度から270度の間だけ裏面を表示
                 if (yRotation >= 90 && yRotation <= 270)
                 {
                     frontImage.enabled = false;
@@ -122,7 +103,6 @@ public class TitleManager : MonoBehaviour
                     backImage.enabled = false;
                 }
 
-                // イラスト切り替えタイミング（90度を過ぎた直後）
                 if (!spriteChanged && yRotation > 90)
                 {
                     ChangeRandomSprite();
@@ -131,12 +111,11 @@ public class TitleManager : MonoBehaviour
             })
             .OnComplete(() =>
             {
-                LoopRotation();
+                isRotating = false;
+                LoopRotation(); // 再ループ
             });
     }
-    /// <summary>
-    /// スプライトをランダムに変更する　連続して同じのが選ばれないようにしてある
-    /// </summary>
+
     private void ChangeRandomSprite()
     {
         if (cardSprites == null || cardSprites.Length == 0) return;
@@ -148,28 +127,66 @@ public class TitleManager : MonoBehaviour
         } while (newIndex == lastIndex && cardSprites.Length > 1);
 
         lastIndex = newIndex;
-
         frontImage.sprite = cardSprites[newIndex];
     }
 
-    /// <summary>
-    /// シーン移動　ホーム画面
-    /// </summary>
+    // ★クリック時に呼ぶ：回転停止＋裏向きに回転アニメーション
+    private void StopAndFlipToBack()
+    {
+        isStopped = true; // 今後ループ呼ばないようにする
+
+        // 回転Tween・遅延Tweenをすべて停止
+        if (rotationTween != null && rotationTween.IsActive()) rotationTween.Kill();
+        if (loopTween != null && loopTween.IsActive()) loopTween.Kill();
+
+        // 現在の回転角度を取得
+        float currentY = card.transform.eulerAngles.y % 360f;
+        float targetY;
+
+        // ★どちらの向きでも必ず裏向き(=180度)に回転するようにする
+        if (currentY < 180)
+            targetY = 180f;
+        else
+            targetY = 540f; // 一回転分足して自然に裏に向ける
+
+        // 回転アニメーション
+        card.transform
+            .DORotate(new Vector3(0, targetY, 0), 0.5f, RotateMode.FastBeyond360)
+            .SetEase(Ease.InOutSine)
+            .OnUpdate(() =>
+            {
+                float yRot = card.transform.eulerAngles.y % 360f;
+                if (yRot >= 90 && yRot <= 270)
+                {
+                    frontImage.enabled = false;
+                    backImage.enabled = true;
+                }
+                else
+                {
+                    frontImage.enabled = true;
+                    backImage.enabled = false;
+                }
+            })
+            .OnComplete(() =>
+            {
+                // 最終的に裏面で固定
+                card.transform.rotation = Quaternion.Euler(0, 180, 0);
+                frontImage.enabled = false;
+                backImage.enabled = true;
+                isRotating = false;
+            });
+    }
+
     public void changeScene()
     {
         SceneManager.LoadScene("Home");
     }
 
-    /// <summary>
-    /// ゲーム終了
-    /// </summary>
     public void gameEnd()
     {
 #if UNITY_EDITOR
-        // Unityエディターでの動作
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-        // 実際のゲーム終了処理
         Application.Quit();
 #endif
     }
