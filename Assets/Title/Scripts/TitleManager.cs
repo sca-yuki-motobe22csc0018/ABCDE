@@ -1,17 +1,19 @@
-using DG.Tweening;
+ï»¿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
-    [SerializeField] Text clickStart; //clickstartText
-    [SerializeField] Text title;      //titleText
+    [SerializeField] Text clickStart;
+    [SerializeField] Text title;
 
-    public Image frontImage;          // •\–Ê‚ÌImage
-    public Image backImage;           // — –Ê‚ÌImage
-    public Sprite[] cardSprites;      // •\–Ê‚ÌƒCƒ‰ƒXƒg‚½‚¿
-    public GameObject card;           // ‰ñ“]‚·‚éƒJ[ƒh
+    public Image frontImage;
+    public Image backImage;
+    public Sprite[] cardSprites;
+    public GameObject card;
+
+    public Button[] buttons;
+    public RectTransform[] buttonTargetPos;
 
     private int lastIndex = -1;
     private float clickStartAlpha = 0.2f;
@@ -20,11 +22,13 @@ public class TitleManager : MonoBehaviour
     private float titleTime = 1.0f;
     private float fadeAlpha = 1.0f;
 
-    private bool clickCheck = false;  // ¶ƒNƒŠƒbƒNó•tƒtƒ‰ƒO
-    private bool isRotating = false;  // ‰ñ“]’†ƒtƒ‰ƒO
-    private bool isStopped = false;   // šƒNƒŠƒbƒNŒã‚ÉŠ®‘S’â~‚µ‚½‚©
-    private Tween rotationTween;      // šŒ»İ‚Ì‰ñ“]Tween‚ğ‹L˜^
-    private Tween loopTween;          // šLoopRotation‚Ì’x‰„ŒÄ‚Ño‚µTween‚ğ‹L˜^
+    private bool clickCheck = false;
+    private bool isRotating = false;
+    private bool isStopped = false;
+
+    private Tween rotationTween;
+    private Tween loopTween;
+    private Tween clickBlinkTween; // â˜… è¿½åŠ ï¼šã‚¯ãƒªãƒƒã‚¯ã‚¹ã‚¿ãƒ¼ãƒˆã®ç‚¹æ»…Tweenã‚’ä¿æŒ
 
     void Start()
     {
@@ -39,23 +43,21 @@ public class TitleManager : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
             gameEnd();
-        }
 
-        // ƒ^ƒCƒgƒ‹ƒtƒF[ƒhŠ®—¹Œã‚ÉƒNƒŠƒbƒNó•t
-        if (clickCheck && Input.GetKeyDown(KeyCode.Mouse0) && !isStopped)
-        {
-            StopAndFlipToBack(); // šƒNƒŠƒbƒN‚Å’â~‚µ‚Ä— ‚É‰ñ“]
-        }
+        if (clickCheck && Input.GetMouseButtonDown(0) && !isStopped)
+            StopAndFlipToBack();
     }
 
     void TitleMove()
     {
         clickCheck = true;
-        Sequence seq = DOTween.Sequence();
-        seq.Append(clickStart.DOFade(clickStartAlpha, alphaTime).SetEase(Ease.InSine));
-        seq.SetLoops(loop, LoopType.Yoyo);
+
+        // å¤‰æ•°ã«ä¿æŒã—ã¦ãŠã
+        clickBlinkTween = clickStart
+            .DOFade(clickStartAlpha, alphaTime)
+            .SetEase(Ease.InSine)
+            .SetLoops(loop, LoopType.Yoyo);
     }
 
     void Fade()
@@ -69,18 +71,13 @@ public class TitleManager : MonoBehaviour
 
     private void LoopRotation()
     {
-        // š ƒ‹[ƒv©‘Ì‚ª’â~‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Ì‚İŸ‚ğŒÄ‚Ô
         if (isStopped) return;
-
-        loopTween = DOVirtual.DelayedCall(4f, () =>
-        {
-            RotateCard();
-        });
+        loopTween = DOVirtual.DelayedCall(4f, () => RotateCard());
     }
 
     private void RotateCard()
     {
-        if (isStopped) return; // š’â~Œã‚È‚ç“®‚©‚³‚È‚¢
+        if (isStopped) return;
 
         float duration = 0.5f;
         bool spriteChanged = false;
@@ -112,7 +109,7 @@ public class TitleManager : MonoBehaviour
             .OnComplete(() =>
             {
                 isRotating = false;
-                LoopRotation(); // Äƒ‹[ƒv
+                LoopRotation();
             });
     }
 
@@ -130,29 +127,28 @@ public class TitleManager : MonoBehaviour
         frontImage.sprite = cardSprites[newIndex];
     }
 
-    // šƒNƒŠƒbƒN‚ÉŒÄ‚ÔF‰ñ“]’â~{— Œü‚«‚É‰ñ“]ƒAƒjƒ[ƒVƒ‡ƒ“
+    // ã‚¯ãƒªãƒƒã‚¯æ™‚ã«ã™ã¹ã¦ç¢ºå®Ÿã«æ­¢ã‚ã¦é€æ˜åŒ–
     private void StopAndFlipToBack()
     {
-        isStopped = true; // ¡Œãƒ‹[ƒvŒÄ‚Î‚È‚¢‚æ‚¤‚É‚·‚é
+        isStopped = true;
+        clickCheck = false;
 
-        // ‰ñ“]TweenE’x‰„Tween‚ğ‚·‚×‚Ä’â~
+        // ç‚¹æ»…Tweenã‚’ç¢ºå®Ÿã«Kill
+        if (clickBlinkTween != null && clickBlinkTween.IsActive()) clickBlinkTween.Kill();
+        DOTween.Kill(clickStart);
+
+
+        // å›è»¢åœæ­¢
         if (rotationTween != null && rotationTween.IsActive()) rotationTween.Kill();
         if (loopTween != null && loopTween.IsActive()) loopTween.Kill();
+        DOTween.Kill(card.transform);
 
-        // Œ»İ‚Ì‰ñ“]Šp“x‚ğæ“¾
         float currentY = card.transform.eulerAngles.y % 360f;
-        float targetY;
+        float targetY = (currentY < 180f) ? 180f : 540f;
 
-        // š‚Ç‚¿‚ç‚ÌŒü‚«‚Å‚à•K‚¸— Œü‚«(=180“x)‚É‰ñ“]‚·‚é‚æ‚¤‚É‚·‚é
-        if (currentY < 180)
-            targetY = 180f;
-        else
-            targetY = 540f; // ˆê‰ñ“]•ª‘«‚µ‚Ä©‘R‚É— ‚ÉŒü‚¯‚é
-
-        // ‰ñ“]ƒAƒjƒ[ƒVƒ‡ƒ“
         card.transform
-            .DORotate(new Vector3(0, targetY, 0), 0.5f, RotateMode.FastBeyond360)
-            .SetEase(Ease.InOutSine)
+            .DORotate(new Vector3(0, targetY, 0), 0.6f, RotateMode.FastBeyond360)
+            .SetEase(Ease.InOutCubic)
             .OnUpdate(() =>
             {
                 float yRot = card.transform.eulerAngles.y % 360f;
@@ -169,17 +165,80 @@ public class TitleManager : MonoBehaviour
             })
             .OnComplete(() =>
             {
-                // ÅI“I‚É— –Ê‚ÅŒÅ’è
                 card.transform.rotation = Quaternion.Euler(0, 180, 0);
                 frontImage.enabled = false;
                 backImage.enabled = true;
-                isRotating = false;
+                AfterCardBackAnimation();
             });
     }
 
-    public void changeScene()
+    private void AfterCardBackAnimation()
     {
-        SceneManager.LoadScene("Home");
+        Sequence seq = DOTween.Sequence();
+
+        // ã‚¿ã‚¤ãƒˆãƒ«ã¨ã‚¯ãƒªãƒƒã‚¯ã‚¹ã‚¿ãƒ¼ãƒˆã‚’ä¸€ç·’ã«ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆï¼ˆ1ç§’ï¼‰
+        float fadeTime = 1.0f;
+        seq.Append(title.DOFade(0f, fadeTime));
+        seq.Join(clickStart.DOFade(0f, fadeTime));
+
+        Sequence buttonSeq = DOTween.Sequence();
+        float moveDuration = 0.25f;
+        float stagger = 0.08f;
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (i >= buttonTargetPos.Length) break;
+            RectTransform btnRect = buttons[i]?.GetComponent<RectTransform>();
+            RectTransform tgtRect = buttonTargetPos[i];
+            if (btnRect == null || tgtRect == null) continue;
+
+            buttonSeq.Insert(i * stagger,
+                btnRect.DOAnchorPos(tgtRect.anchoredPosition, moveDuration).SetEase(Ease.OutBack));
+        }
+
+        seq.Append(buttonSeq);
+        seq.AppendCallback(() => FlipCardToFront());
+        seq.Play();
+    }
+
+    private void FlipCardToFront()
+    {
+        DOTween.Kill(card.transform);
+
+        bool spriteChanged = false; // â† è¿½åŠ ï¼ˆ1å›ã ã‘çµµæŸ„å¤‰æ›´ã™ã‚‹ãŸã‚ã®ãƒ•ãƒ©ã‚°ï¼‰
+
+        card.transform
+            .DORotate(Vector3.zero, 0.6f, RotateMode.FastBeyond360)
+            .SetEase(Ease.InOutCubic)
+            .OnUpdate(() =>
+            {
+                float y = card.transform.eulerAngles.y % 360f;
+
+                // â˜… ã¡ã‚‡ã†ã©è£â†’è¡¨ã®åˆ‡ã‚Šæ›¿ãˆï¼ˆ90åº¦ã‚’è¶…ãˆãŸç¬é–“ï¼‰ã§çµµæŸ„ã‚’å¤‰ãˆã‚‹
+                if (!spriteChanged && y > 90f)
+                {
+                    ChangeRandomSprite();
+                    spriteChanged = true;
+                }
+
+                if (y >= 85f && y <= 275f)
+                {
+                    frontImage.enabled = false;
+                    backImage.enabled = true;
+                }
+                else
+                {
+                    frontImage.enabled = true;
+                    backImage.enabled = false;
+                }
+            })
+            .OnComplete(() =>
+            {
+                card.transform.rotation = Quaternion.identity;
+                frontImage.enabled = true;
+                backImage.enabled = false;
+
+            });
     }
 
     public void gameEnd()
