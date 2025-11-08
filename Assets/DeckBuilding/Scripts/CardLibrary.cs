@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// カード情報をCSVからロードし、検索・ソートできるクラス
+/// Resources/cards.csv を読み込み CardData のリストを作る
+/// Query(...) で絞り込み可能
 /// </summary>
 public class CardLibrary : MonoBehaviour
 {
@@ -11,67 +13,77 @@ public class CardLibrary : MonoBehaviour
 
     void Awake()
     {
+        // 登録 & 永続化
         Locator.Register<CardLibrary>(this);
         DontDestroyOnLoad(gameObject);
-        LoadFromCSV("cards");
+
+        LoadFromCSV("cards"); // Resources/cards.csv を期待
     }
 
-    /// <summary>
-    /// Resources/cards.csv を読み込み、CardDataリストに変換する
-    /// </summary>
-    void LoadFromCSV(string fileName)
+    void LoadFromCSV(string resourceName)
     {
-        TextAsset ta = Resources.Load<TextAsset>(fileName);
+        TextAsset ta = Resources.Load<TextAsset>(resourceName);
         if (ta == null)
         {
-            Debug.LogError("CSV not found: " + fileName);
+            Debug.LogError($"[CardLibrary] Resources/{resourceName}.csv not found.");
             return;
         }
 
-        var lines = ta.text.Split('\n');
-        for (int i = 1; i < lines.Length; i++)
-        {
-            var row = lines[i].Split(',');
-            if (row.Length < 6) continue;
+        allCards.Clear();
 
-            CardData cd = new CardData
+        using (StringReader sr = new StringReader(ta.text))
+        {
+            bool isFirstLine = true;
+            string line;
+            while ((line = sr.ReadLine()) != null)
             {
-                id = row[0].Trim(),
-                name = row[1].Trim(),
-                category = row[2].Trim(),
-                cost = int.Parse(row[3]),
-                abilityText = row[4].Trim('"'),
-                imageName = row[5].Trim()
-            };
-            allCards.Add(cd);
+                if (isFirstLine) { isFirstLine = false; continue; } // ヘッダーを飛ばす
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                // 単純なカンマ分割（CSV にカンマを含む可能性がある場合はより厳密なパーサを使うべき）
+                string[] cols = line.Split(',');
+
+                if (cols.Length < 8) continue; // A-H が最低限必要
+
+                CardData cd = new CardData();
+                cd.id = cols[0].Trim();
+                cd.ruby = cols[1].Trim();
+                cd.type = cols[2].Trim();
+                cd.rarity = cols[3].Trim();
+                if (!int.TryParse(cols[4].Trim(), out int cost)) cost = 0;
+                cd.cost = cost;
+                cd.text = cols[5].Trim().Replace("\\n", "\n");
+                cd.image = cols[6].Trim();
+                cd.effectType1 = cols[7].Trim();
+
+                allCards.Add(cd);
+            }
         }
+
+        Debug.Log($"[CardLibrary] Loaded {allCards.Count} cards from CSV.");
     }
 
-    /// <summary>
-    /// 条件指定でカードを検索（カテゴリ、コスト範囲、名前など）
-    /// </summary>
-    public List<CardData> Query(string category = null, int? minCost = null, int? maxCost = null, string name = null)
+    /// <summary>カテゴリ(Type)、コストレンジ、名前部分一致で絞る</summary>
+    public List<CardData> Query(string type = null, int? minCost = null, int? maxCost = null, string nameOrId = null)
     {
         IEnumerable<CardData> q = allCards;
 
-        if (!string.IsNullOrEmpty(category))
-            q = q.Where(c => c.category == category);
-
-        if (minCost.HasValue)
-            q = q.Where(c => c.cost >= minCost.Value);
-
-        if (maxCost.HasValue)
-            q = q.Where(c => c.cost <= maxCost.Value);
-
-        if (!string.IsNullOrEmpty(name))
-            q = q.Where(c => c.name.ToLower().Contains(name.ToLower()));
+        if (!string.IsNullOrEmpty(type)) q = q.Where(c => c.type == type);
+        if (minCost.HasValue) q = q.Where(c => c.cost >= minCost.Value);
+        if (maxCost.HasValue) q = q.Where(c => c.cost <= maxCost.Value);
+        if (!string.IsNullOrEmpty(nameOrId))
+            q = q.Where(c => (c.ruby != null && c.ruby.Contains(nameOrId)) || (c.id != null && c.id.Contains(nameOrId)));
 
         return q.ToList();
     }
 
-    /// <summary>
-    /// IDでカード取得
-    /// </summary>
+    /// <summary>Resources/Cards/<image> から Sprite を取得</summary>
+    public Sprite GetCardSprite(CardData card)
+    {
+        if (card == null || string.IsNullOrEmpty(card.image)) return null;
+        return Resources.Load<Sprite>($"Cards/{card.image}");
+    }
+
     public CardData GetById(string id)
     {
         return allCards.FirstOrDefault(c => c.id == id);

@@ -1,98 +1,199 @@
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
 
 /// <summary>
-/// �f�b�L�Ґ���ʂ�UI�Ǘ��F
-/// �����E�X�N���[���E�N���b�N�ǉ��E�ۑ��Ȃ�
+/// デッキ編成画面の UI 管理クラス
+/// - 左側詳細表示の更新 (ShowCardDetail)
+/// - カード一覧 / デッキ / 固定カードの描画
+/// - 検索・保存・読み込み・リセット・閉じる処理
+/// 注: Locator 経由で各マネージャを参照
 /// </summary>
 public class DeckEditorUI : MonoBehaviour
 {
-    [Header("UI References")]
-    public GameObject cardPrefab;
-    public Transform cardListParent; // ScrollRect��Content�Ɏw��
+    [Header("Parents (ScrollRect Contentなど)")]
+    public Transform cardListParent;   // Tag: CardList を付けること（Raycast 判定用）
+    public Transform deckParent;       // Tag: DeckSlot を付けること（Raycast 判定用）
+    public Transform fixedAreaParent;
+
+    [Header("Detail Panel (左)")]
+    public Image detailImage;
+    public TMP_Text detailNameText;
+    public TMP_Text detailCostText;
+    public TMP_Text detailTypeText;
+    public TMP_Text detailText;
+
+    [Header("Controls & Prefab")]
+    public GameObject cardPrefab;      // Image + TMP_Text を含む簡易カードUI prefab
     public TMP_Dropdown categoryDropdown;
-    public TMP_InputField nameInput, minCostInput, maxCostInput;
-    public Button searchButton, saveButton, resetButton, closeButton;
-    public TMP_Dropdown slotDropdown; // �ۑ��X���b�g�I��
-    public TextMeshProUGUI infoText;
+    public TMP_InputField nameInput;
+    public TMP_InputField minCostInput;
+    public TMP_InputField maxCostInput;
+    public TMP_Dropdown slotDropdown;
+    public Button searchButton;
+    public Button saveButton;
+    public Button loadButton;
+    public Button resetButton;
+    public Button closeButton;
+    public TMP_Text infoText;
+
+    CardLibrary cardLibrary => Locator.Get<CardLibrary>();
+    DeckManager deckManager => Locator.Get<DeckManager>();
+    SaveManager saveManager => Locator.Get<SaveManager>();
+    SceneController sceneController => Locator.Get<SceneController>();
 
     void Start()
     {
-        searchButton.onClick.AddListener(OnSearch);
-        saveButton.onClick.AddListener(OnSave);
-        resetButton.onClick.AddListener(OnReset);
-        closeButton.onClick.AddListener(OnClose);
-        RefreshList();
+        // ボタン登録（nullチェック）
+        if (searchButton != null) searchButton.onClick.AddListener(RefreshCardList);
+        if (saveButton != null) saveButton.onClick.AddListener(OnSave);
+        if (loadButton != null) loadButton.onClick.AddListener(OnLoad);
+        if (resetButton != null) resetButton.onClick.AddListener(OnReset);
+        if (closeButton != null) closeButton.onClick.AddListener(OnClose);
+
+        RefreshAll();
     }
 
-    /// <summary>
-    /// �J�[�h�ꗗ���ĕ\���iScrollRect�Ή��j
-    /// </summary>
-    void RefreshList()
+    public void RefreshAll()
     {
-        foreach (Transform t in cardListParent)
-            Destroy(t.gameObject);
+        RefreshFixedArea();
+        RefreshDeckView();
+        RefreshCardList();
+    }
 
-        var lib = Locator.Get<CardLibrary>();
+    public void RefreshFixedArea()
+    {
+        if (fixedAreaParent == null) return;
+        foreach (Transform t in fixedAreaParent) Destroy(t.gameObject);
 
-        int? min = int.TryParse(minCostInput.text, out var mi) ? mi : (int?)null;
-        int? max = int.TryParse(maxCostInput.text, out var ma) ? ma : (int?)null;
-        string cat = categoryDropdown.value == 0 ? null : categoryDropdown.options[categoryDropdown.value].text;
-        string name = string.IsNullOrEmpty(nameInput.text) ? null : nameInput.text;
-
-        var cards = lib.Query(cat, min, max, name);
-        foreach (var c in cards)
+        var fixedCards = deckManager.GetFixedDeck();
+        foreach (var c in fixedCards)
         {
-            var obj = Instantiate(cardPrefab, cardListParent);
-            obj.GetComponentInChildren<TextMeshProUGUI>().text = $"{c.name} (cost:{c.cost})";
-            var handler = obj.AddComponent<CardDragHandler>();
-            handler.Setup(c, this);
+            var go = Instantiate(cardPrefab, fixedAreaParent);
+            var text = go.GetComponentInChildren<TMP_Text>();
+            if (text) text.text = $"{c.ruby}";
+            var img = go.GetComponentInChildren<Image>();
+            if (img) img.sprite = cardLibrary.GetCardSprite(c);
+
+            // 固定は基本削除できないが見た目統一のため handler を付けておく（inDeck = true）
+            var handler = go.AddComponent<CardDragHandler>();
+            handler.Setup(c, this, true);
+        }
+    }
+
+    public void RefreshDeckView()
+    {
+        if (deckParent == null) return;
+        foreach (Transform t in deckParent) Destroy(t.gameObject);
+
+        var current = deckManager.GetNormalDeck();
+        foreach (var c in current)
+        {
+            var go = Instantiate(cardPrefab, deckParent);
+            var text = go.GetComponentInChildren<TMP_Text>();
+            if (text) text.text = $"{c.ruby} ({c.cost})";
+            var img = go.GetComponentInChildren<Image>();
+            if (img) img.sprite = cardLibrary.GetCardSprite(c);
+
+            // デッキ側のカードはクリックで削除できる(inDeck=true)
+            var handler = go.AddComponent<CardDragHandler>();
+            handler.Setup(c, this, true);
         }
 
-        infoText.text = $"Deck: {Locator.Get<DeckManager>().GetDeck().Count}/30";
+        if (infoText != null)
+            infoText.text = $"デッキ枚数: {current.Count}/{DeckManager.MAX_DECK}";
     }
 
-    public void OnCardClick(CardData card)
+    public void RefreshCardList()
     {
-        var dm = Locator.Get<DeckManager>();
-        bool added = dm.AddCard(card);
-        if (!added)
-            dm.RemoveCard(card);
-        RefreshList();
+        if (cardListParent == null) return;
+        foreach (Transform t in cardListParent) Destroy(t.gameObject);
+
+        int? min = int.TryParse(minCostInput?.text, out var mi) ? mi : (int?)null;
+        int? max = int.TryParse(maxCostInput?.text, out var ma) ? ma : (int?)null;
+        string cat = (categoryDropdown != null && categoryDropdown.value > 0) ? categoryDropdown.options[categoryDropdown.value].text : null;
+        string name = string.IsNullOrEmpty(nameInput?.text) ? null : nameInput.text;
+
+        var list = cardLibrary.Query(cat, min, max, name);
+        foreach (var c in list)
+        {
+            var go = Instantiate(cardPrefab, cardListParent);
+            var text = go.GetComponentInChildren<TMP_Text>();
+            if (text) text.text = $"{c.ruby} ({c.cost})";
+            var img = go.GetComponentInChildren<Image>();
+            if (img) img.sprite = cardLibrary.GetCardSprite(c);
+
+            // 一覧側のカードは inDeck=false（クリックで追加）
+            var handler = go.AddComponent<CardDragHandler>();
+            handler.Setup(c, this, false);
+        }
     }
 
-    void OnSearch() => RefreshList();
+    // 左側詳細表示を更新する（CardDragHandler から呼ばれる）
+    public void ShowCardDetail(CardData card)
+    {
+        if (card == null) return;
+        if (detailNameText != null) detailNameText.text = card.ruby;
+        if (detailCostText != null) detailCostText.text = $"コスト: {card.cost}";
+        if (detailTypeText != null) detailTypeText.text = $"分類: {card.type}";
+        if (detailText != null) detailText.text = card.text;
+        if (detailImage != null) detailImage.sprite = cardLibrary.GetCardSprite(card);
+    }
 
+    // CardDragHandler から Add/Remove を呼ぶ（DeckManager の公開メソッドを使用）
+    public void AddToDeck(CardData card)
+    {
+        if (deckManager.AddCard(card))
+        {
+            RefreshDeckView();
+            RefreshCardList();
+        }
+        else
+        {
+            if (infoText != null) infoText.text = "追加できません（上限または枚数制限）";
+        }
+    }
+
+    public void RemoveFromDeck(CardData card)
+    {
+        if (deckManager.RemoveCard(card))
+        {
+            RefreshDeckView();
+            RefreshCardList();
+        }
+        else
+        {
+            if (infoText != null) infoText.text = "削除失敗";
+        }
+    }
+
+    // ボタンコールバック
     void OnSave()
     {
-        var dm = Locator.Get<DeckManager>();
-        if (!dm.IsFull())
-        {
-            infoText.text = "30�������Ă��܂���B";
-            return;
-        }
-        int slot = slotDropdown.value + 1;
-        Locator.Get<SaveManager>().SaveDeck(slot);
-        infoText.text = $"�X���b�g{slot}�ɕۑ����܂����B";
+        int slot = (slotDropdown != null) ? slotDropdown.value + 1 : 1;
+        saveManager.SaveDeck(slot);
+        if (infoText != null) infoText.text = $"保存しました（スロット{slot}）";
+    }
+
+    void OnLoad()
+    {
+        int slot = (slotDropdown != null) ? slotDropdown.value + 1 : 1;
+        saveManager.LoadDeck(slot);
+        RefreshAll();
+        if (infoText != null) infoText.text = $"読み込みました（スロット{slot}）";
     }
 
     void OnReset()
     {
-        Locator.Get<DeckManager>().ResetDeck();
-        infoText.text = "�f�b�L�����Z�b�g���܂����B";
-        RefreshList();
+        deckManager.ResetDeck();
+        RefreshAll();
+        if (infoText != null) infoText.text = "デッキをリセットしました。";
     }
 
     void OnClose()
     {
-        var dm = Locator.Get<DeckManager>();
-        if (!dm.IsFull())
-        {
-            infoText.text = "�ۑ�����Ă��܂���B���܂����H";
-            // ���ۂɂ�Yes/No�_�C�A���O���o���̂��]�܂���
-        }
-        Locator.Get<SceneController>().LoadScene("MainScene");
+        // 未保存の確認ダイアログを入れるのが望ましい（ここでは直接遷移）
+        sceneController.LoadScene("MainScene");
     }
 }

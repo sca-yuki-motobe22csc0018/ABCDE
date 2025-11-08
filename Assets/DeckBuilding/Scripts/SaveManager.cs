@@ -3,8 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// PlayerPrefsを使ってデッキを保存・読み込みする
-/// 複数スロット対応
+/// PlayerPrefs を使ってデッキを複数スロット保存/読み込みする簡易マネージャ
 /// </summary>
 public class SaveManager : MonoBehaviour
 {
@@ -15,48 +14,59 @@ public class SaveManager : MonoBehaviour
     }
 
     [System.Serializable]
-    public class DeckSaveData
+    public class DeckSaveDTO
     {
-        public List<string> deckIds;
+        public List<string> normalIds;
         public List<string> fixedIds;
     }
 
-    /// <summary>
-    /// スロット番号（例: 1～3）を指定してデッキ保存
-    /// </summary>
-    public void SaveDeck(int slot = 1)
+    public void SaveDeck(int slot)
     {
         var dm = Locator.Get<DeckManager>();
-        DeckSaveData data = new DeckSaveData
+        if (dm == null) return;
+
+        var dto = new DeckSaveDTO
         {
-            deckIds = dm.GetDeck().Select(c => c.id).ToList(),
-            fixedIds = dm.GetFixedCards().Select(c => c.id).ToList()
+            normalIds = dm.GetNormalDeck().Select(c => c.id).ToList(),
+            fixedIds = dm.GetFixedDeck().Select(c => c.id).ToList()
         };
-        string json = JsonUtility.ToJson(data);
-        PlayerPrefs.SetString($"DeckSave_{slot}", json);
+
+        string json = JsonUtility.ToJson(dto);
+        PlayerPrefs.SetString($"DeckSlot_{slot}", json);
         PlayerPrefs.Save();
-        Debug.Log($"Deck saved to slot {slot}");
+        Debug.Log($"[SaveManager] Saved deck slot {slot}");
     }
 
-    /// <summary>
-    /// 指定スロットのデッキ読み込み
-    /// </summary>
-    public void LoadDeck(int slot = 1)
+    public void LoadDeck(int slot)
     {
-        if (!PlayerPrefs.HasKey($"DeckSave_{slot}"))
+        var lib = Locator.Get<CardLibrary>();
+        var dm = Locator.Get<DeckManager>();
+        if (lib == null || dm == null) return;
+
+        if (!PlayerPrefs.HasKey($"DeckSlot_{slot}"))
         {
-            Debug.Log($"No deck found in slot {slot}");
+            Debug.LogWarning($"[SaveManager] Deck slot {slot} not found.");
             return;
         }
 
-        string json = PlayerPrefs.GetString($"DeckSave_{slot}");
-        var data = JsonUtility.FromJson<DeckSaveData>(json);
-        var lib = Locator.Get<CardLibrary>();
+        string json = PlayerPrefs.GetString($"DeckSlot_{slot}");
+        var dto = JsonUtility.FromJson<DeckSaveDTO>(json);
+        if (dto == null)
+        {
+            Debug.LogWarning($"[SaveManager] Failed to parse slot {slot}.");
+            return;
+        }
 
-        var deckCards = data.deckIds.Select(id => lib.GetById(id)).Where(c => c != null).ToList();
-        var fixedCards = data.fixedIds.Select(id => lib.GetById(id)).Where(c => c != null).ToList();
+        dm.ResetDeck();
+        foreach (var id in dto.normalIds ?? new List<string>())
+        {
+            var c = lib.GetById(id);
+            if (c != null) dm.AddCard(c);
+        }
 
-        Locator.Get<DeckManager>().LoadDeck(deckCards, fixedCards);
-        Debug.Log($"Deck loaded from slot {slot}");
+        // 再設定（固定カードは CSV を参照）
+        dm.SetupFixedCards();
+
+        Debug.Log($"[SaveManager] Loaded deck slot {slot}");
     }
 }

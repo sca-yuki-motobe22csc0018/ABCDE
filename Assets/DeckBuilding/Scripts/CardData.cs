@@ -1,15 +1,18 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 /// <summary>
-/// CSV‚©‚ç“Ç‚İ‚ŞƒJ[ƒh1–‡•ª‚Ìƒf[ƒ^\‘¢
+/// CSV ã® Aã€œH åˆ—ã«å¯¾å¿œã™ã‚‹ã‚«ãƒ¼ãƒ‰ãƒ‡ãƒ¼ã‚¿ã‚¯ãƒ©ã‚¹
+/// A: Name (id), B: ruby, C: Type, D: Rarity, E: Cost, F: Text, G: Image, H: effectType1
 /// </summary>
 [System.Serializable]
 public class CardData
 {
-    public string id;          // ¯•ÊID
-    public string name;        // ƒJ[ƒh–¼
-    public string category;    // •ª—ŞiAttack, Defense, etc.j
-    public int cost;           // ƒRƒXƒg
-    public string abilityText; // ”\—Íà–¾•¶
-    public string imageName;   // Resources/Cards ‚É‚ ‚é‰æ‘œ–¼
+    public string id;          // Aåˆ— (Name)
+    public string ruby;        // Båˆ— (ruby)
+    public string type;        // Cåˆ— (Type)
+    public string rarity;      // Dåˆ— (Rarity)
+    public int cost;           // Eåˆ— (Cost)
+    public string text;        // Fåˆ— (Text)
+    public string image;       // Gåˆ— (Image) -> Resources/Cards/<image>
+    public string effectType1; // Håˆ— (effectType1)
 }
