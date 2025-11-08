@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// シーン遷移を管理するクラス。DontDestroyOnLoadで永続化。
+/// シーン切り替えを簡単に呼べるヘルパー
 /// </summary>
 public class SceneController : MonoBehaviour
 {
@@ -12,9 +12,6 @@ public class SceneController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    /// <summary>
-    /// シーン名を指定してロード
-    /// </summary>
     public void LoadScene(string sceneName)
     {
         SceneManager.LoadScene(sceneName);
