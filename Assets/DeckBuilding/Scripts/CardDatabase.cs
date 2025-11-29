@@ -8,7 +8,7 @@ public class CardDatabase : MonoBehaviour
     public static CardDatabase Instance { get; private set; }
 
     public List<CardInfo> cards = new List<CardInfo>();
-    public string csvFileName = "Card_Data.csv";
+    public string csvFileName = "Card_Data1.csv";
 
     void Awake()
     {
