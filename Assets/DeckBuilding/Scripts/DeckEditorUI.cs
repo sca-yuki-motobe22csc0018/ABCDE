@@ -3,197 +3,175 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// デッキ編成画面の UI 管理クラス
-/// - 左側詳細表示の更新 (ShowCardDetail)
-/// - カード一覧 / デッキ / 固定カードの描画
-/// - 検索・保存・読み込み・リセット・閉じる処理
-/// 注: Locator 経由で各マネージャを参照
-/// </summary>
 public class DeckEditorUI : MonoBehaviour
 {
-    [Header("Parents (ScrollRect Contentなど)")]
-    public Transform cardListParent;   // Tag: CardList を付けること（Raycast 判定用）
-    public Transform deckParent;       // Tag: DeckSlot を付けること（Raycast 判定用）
-    public Transform fixedAreaParent;
+    [Header("UI References")]
+    public Transform cardListParent;
+    public Transform deckParent;
 
-    [Header("Detail Panel (左)")]
-    public Image detailImage;
-    public TMP_Text detailNameText;
-    public TMP_Text detailCostText;
-    public TMP_Text detailTypeText;
-    public TMP_Text detailText;
+    public GameObject listItemPrefab;   // 右側カード一覧用（画像1枚のPrefab）
+    public GameObject deckItemPrefab;   // 中央デッキ表示用（画像1枚のPrefab）
 
-    [Header("Controls & Prefab")]
-    public GameObject cardPrefab;      // Image + TMP_Text を含む簡易カードUI prefab
-    public TMP_Dropdown categoryDropdown;
-    public TMP_InputField nameInput;
-    public TMP_InputField minCostInput;
-    public TMP_InputField maxCostInput;
-    public TMP_Dropdown slotDropdown;
-    public Button searchButton;
-    public Button saveButton;
-    public Button loadButton;
-    public Button resetButton;
-    public Button closeButton;
-    public TMP_Text infoText;
+    public CardDetailUI cardDetailUI;
 
-    CardLibrary cardLibrary => Locator.Get<CardLibrary>();
-    DeckManager deckManager => Locator.Get<DeckManager>();
-    SaveManager saveManager => Locator.Get<SaveManager>();
-    SceneController sceneController => Locator.Get<SceneController>();
+    [Header("Deck Status")]
+    public TMP_Text deckCountText;
+
+    [Header("Search UI")]
+    public TMP_InputField nameSearchField;
+    public TMP_Dropdown deckSelectDropdown;
+
+    List<string> currentDeck = new();
+    DeckData loadingDeck;
+    int selectedDeckIndex = 0;
 
     void Start()
     {
-        // ボタン登録（nullチェック）
-        if (searchButton != null) searchButton.onClick.AddListener(RefreshCardList);
-        if (saveButton != null) saveButton.onClick.AddListener(OnSave);
-        if (loadButton != null) loadButton.onClick.AddListener(OnLoad);
-        if (resetButton != null) resetButton.onClick.AddListener(OnReset);
-        if (closeButton != null) closeButton.onClick.AddListener(OnClose);
-
-        RefreshAll();
+        LoadDeckFromSave();
+        RefreshCardList();
+        RefreshDeckDisplay();
     }
 
-    public void RefreshAll()
+    //-------------------------------------------------------
+    // デッキ読み込み
+    //-------------------------------------------------------
+    void LoadDeckFromSave()
     {
-        RefreshFixedArea();
-        RefreshDeckView();
+        selectedDeckIndex = deckSelectDropdown.value;
+        loadingDeck = DeckSaveManager.Instance.GetDeck(selectedDeckIndex);
+
+        currentDeck = new List<string>(loadingDeck.cardNumbers);
+    }
+
+    //-------------------------------------------------------
+    // 右側：カード一覧
+    //-------------------------------------------------------
+    void RefreshCardList()
+    {
+        foreach (Transform t in cardListParent) Destroy(t.gameObject);
+
+        foreach (var card in CardDatabase.Instance.cards)
+        {
+            // 名前検索
+            if (!string.IsNullOrEmpty(nameSearchField.text))
+            {
+                if (!card.name.Contains(nameSearchField.text)) continue;
+            }
+
+            // ★Prefabを生成（画像のみ）
+            var obj = Instantiate(listItemPrefab, cardListParent);
+
+            // ★画像をセット
+            obj.GetComponent<CardDisplayImageOnly>().SetCard(card);
+
+            // ★クリックでデッキに追加
+            Button btn = obj.GetComponent<Button>();
+            btn.onClick.AddListener(() => AddCardToDeck(card));
+
+            // ★詳細表示（左側）
+            btn.onClick.AddListener(() => ShowDetail(card));
+        }
+    }
+
+    public void OnSearchButton()
+    {
         RefreshCardList();
     }
 
-    public void RefreshFixedArea()
+
+    //-------------------------------------------------------
+    // 左側：カード詳細
+    //-------------------------------------------------------
+    public void ShowDetail(CardInfo card)
     {
-        if (fixedAreaParent == null) return;
-        foreach (Transform t in fixedAreaParent) Destroy(t.gameObject);
-
-        var fixedCards = deckManager.GetFixedDeck();
-        foreach (var c in fixedCards)
-        {
-            var go = Instantiate(cardPrefab, fixedAreaParent);
-            var text = go.GetComponentInChildren<TMP_Text>();
-            if (text) text.text = $"{c.ruby}";
-            var img = go.GetComponentInChildren<Image>();
-            if (img) img.sprite = cardLibrary.GetCardSprite(c);
-
-            // 固定は基本削除できないが見た目統一のため handler を付けておく（inDeck = true）
-            var handler = go.AddComponent<CardDragHandler>();
-            handler.Setup(c, this, true);
-        }
+        cardDetailUI.Show(card);
     }
 
-    public void RefreshDeckView()
+
+    //-------------------------------------------------------
+    // 中央：デッキ表示
+    //-------------------------------------------------------
+    void RefreshDeckDisplay()
     {
-        if (deckParent == null) return;
         foreach (Transform t in deckParent) Destroy(t.gameObject);
 
-        var current = deckManager.GetNormalDeck();
-        foreach (var c in current)
+        foreach (var num in currentDeck)
         {
-            var go = Instantiate(cardPrefab, deckParent);
-            var text = go.GetComponentInChildren<TMP_Text>();
-            if (text) text.text = $"{c.ruby} ({c.cost})";
-            var img = go.GetComponentInChildren<Image>();
-            if (img) img.sprite = cardLibrary.GetCardSprite(c);
+            var info = CardDatabase.Instance.GetCard(num);
+            if (info == null) continue;
 
-            // デッキ側のカードはクリックで削除できる(inDeck=true)
-            var handler = go.AddComponent<CardDragHandler>();
-            handler.Setup(c, this, true);
+            // ★デッキ用Prefab（画像だけ）生成
+            var obj = Instantiate(deckItemPrefab, deckParent);
+
+            // ★画像セット
+            obj.GetComponent<CardDisplayImageOnly>().SetCard(info);
+
+            // ★クリックでデッキから削除
+            Button btn = obj.GetComponent<Button>();
+            btn.onClick.AddListener(() => RemoveCardFromDeck(info));
         }
 
-        if (infoText != null)
-            infoText.text = $"デッキ枚数: {current.Count}/{DeckManager.MAX_DECK}";
+        deckCountText.text = currentDeck.Count + "/30";
     }
 
-    public void RefreshCardList()
+
+    //-------------------------------------------------------
+    // カード追加・削除
+    //-------------------------------------------------------
+    public void AddCardToDeck(CardInfo card)
     {
-        if (cardListParent == null) return;
-        foreach (Transform t in cardListParent) Destroy(t.gameObject);
+        // 30枚上限
+        if (currentDeck.Count >= 30) return;
 
-        int? min = int.TryParse(minCostInput?.text, out var mi) ? mi : (int?)null;
-        int? max = int.TryParse(maxCostInput?.text, out var ma) ? ma : (int?)null;
-        string cat = (categoryDropdown != null && categoryDropdown.value > 0) ? categoryDropdown.options[categoryDropdown.value].text : null;
-        string name = string.IsNullOrEmpty(nameInput?.text) ? null : nameInput.text;
+        // 同名2枚制限
+        int count = currentDeck.FindAll(x => x == card.number).Count;
+        if (count >= 2) return;
 
-        var list = cardLibrary.Query(cat, min, max, name);
-        foreach (var c in list)
+        // EX1/EX2 特別ルール（必要ならここに追加）
+
+        currentDeck.Add(card.number);
+        RefreshDeckDisplay();
+    }
+
+    public void RemoveCardFromDeck(CardInfo card)
+    {
+        currentDeck.Remove(card.number);
+        RefreshDeckDisplay();
+    }
+
+
+    //-------------------------------------------------------
+    // デッキ保存
+    //-------------------------------------------------------
+    public void OnSaveButton()
+    {
+        if (currentDeck.Count != 30)
         {
-            var go = Instantiate(cardPrefab, cardListParent);
-            var text = go.GetComponentInChildren<TMP_Text>();
-            if (text) text.text = $"{c.ruby} ({c.cost})";
-            var img = go.GetComponentInChildren<Image>();
-            if (img) img.sprite = cardLibrary.GetCardSprite(c);
-
-            // 一覧側のカードは inDeck=false（クリックで追加）
-            var handler = go.AddComponent<CardDragHandler>();
-            handler.Setup(c, this, false);
+            deckCountText.text = "デッキ枚数が30ではありません";
+            return;
         }
+
+        DeckData data = new DeckData();
+        data.cardNumbers = new List<string>(currentDeck);
+        DeckSaveManager.Instance.SetDeck(selectedDeckIndex, data);
+
+        deckCountText.text = "保存しました";
     }
 
-    // 左側詳細表示を更新する（CardDragHandler から呼ばれる）
-    public void ShowCardDetail(CardData card)
+    //-------------------------------------------------------
+    // リセット
+    //-------------------------------------------------------
+    public void OnResetButton()
     {
-        if (card == null) return;
-        if (detailNameText != null) detailNameText.text = card.ruby;
-        if (detailCostText != null) detailCostText.text = $"コスト: {card.cost}";
-        if (detailTypeText != null) detailTypeText.text = $"分類: {card.type}";
-        if (detailText != null) detailText.text = card.text;
-        if (detailImage != null) detailImage.sprite = cardLibrary.GetCardSprite(card);
+        currentDeck.Clear();
+        RefreshDeckDisplay();
     }
 
-    // CardDragHandler から Add/Remove を呼ぶ（DeckManager の公開メソッドを使用）
-    public void AddToDeck(CardData card)
+    //-------------------------------------------------------
+    // 戻る
+    //-------------------------------------------------------
+    public void OnCloseButton()
     {
-        if (deckManager.AddCard(card))
-        {
-            RefreshDeckView();
-            RefreshCardList();
-        }
-        else
-        {
-            if (infoText != null) infoText.text = "追加できません（上限または枚数制限）";
-        }
-    }
-
-    public void RemoveFromDeck(CardData card)
-    {
-        if (deckManager.RemoveCard(card))
-        {
-            RefreshDeckView();
-            RefreshCardList();
-        }
-        else
-        {
-            if (infoText != null) infoText.text = "削除失敗";
-        }
-    }
-
-    // ボタンコールバック
-    void OnSave()
-    {
-        int slot = (slotDropdown != null) ? slotDropdown.value + 1 : 1;
-        saveManager.SaveDeck(slot);
-        if (infoText != null) infoText.text = $"保存しました（スロット{slot}）";
-    }
-
-    void OnLoad()
-    {
-        int slot = (slotDropdown != null) ? slotDropdown.value + 1 : 1;
-        saveManager.LoadDeck(slot);
-        RefreshAll();
-        if (infoText != null) infoText.text = $"読み込みました（スロット{slot}）";
-    }
-
-    void OnReset()
-    {
-        deckManager.ResetDeck();
-        RefreshAll();
-        if (infoText != null) infoText.text = "デッキをリセットしました。";
-    }
-
-    void OnClose()
-    {
-        // 未保存の確認ダイアログを入れるのが望ましい（ここでは直接遷移）
-        sceneController.LoadScene("MainScene");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
     }
 }
