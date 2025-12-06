@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -30,40 +30,97 @@ public class CardDatabase : MonoBehaviour
             return;
         }
 
-        var lines = File.ReadAllLines(path)
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .ToArray();
+        var csvLines = ParseCsv(path).Take(63).ToList();
 
         bool first = true;
-        foreach (var line in lines)
+        foreach (var cells in csvLines)
         {
-            if (first && line.Contains("Number"))
+            if (first && cells.Length > 0 && cells[0].Contains("Number"))
             {
                 first = false;
+                Debug.Log($"ヘッダー読み込み");
                 continue;
             }
 
             first = false;
-            var c = line.Split(',');
 
-            if (c.Length < 8) continue;
+            if (cells.Length < 8)
+            {
+                Debug.LogWarning($"列数不足: {cells.Length}");
+                continue;
+            }
 
             CardInfo card = new CardInfo();
-            card.number = c[0];
-            card.name = c[1];
-            card.ruby = c[2];
-            card.type = c[3];
-            card.rarity = c[4];
-            int.TryParse(c[5], out card.cost);
-            card.text = c[6];
-            card.imageName = c[7];
+            card.number = cells[0].Trim();
+            card.name = cells[1].Trim();
+            card.ruby = cells[2].Trim();
+            card.type = cells[3].Trim();
+            card.rarity = cells[4].Trim();
+            int.TryParse(cells[5].Trim(), out card.cost);
+            card.text = cells[6].Trim();
+            card.imageName = cells[7].Trim();
 
             card.sprite = Resources.Load<Sprite>("Cards/" + card.imageName);
 
             cards.Add(card);
+
+            Debug.Log($"[{cards.Count}] 番号:{card.number} | 名前:{card.name} | ルビ:{card.ruby} | " +
+                      $"タイプ:{card.type} | レアリティ:{card.rarity} | コスト:{card.cost} | " +
+                      $"テキスト:{card.text.Replace("\n", " ")} | 画像:{card.imageName}");
         }
 
-        Debug.Log($"Loaded {cards.Count} cards.");
+        Debug.Log($"✓ 合計 {cards.Count} 枚のカードを読み込みました。");
+    }
+
+    private List<string[]> ParseCsv(string path)
+    {
+        var result = new List<string[]>();
+        using (var reader = new StreamReader(path))
+        {
+            var currentLine = new List<string>();
+            var currentCell = new System.Text.StringBuilder();
+            bool inQuotes = false;
+
+            while (reader.Peek() > -1)
+            {
+                char c = (char)reader.Read();
+
+                if (c == '"')
+                {
+                    inQuotes = !inQuotes;
+                }
+                else if (c == ',' && !inQuotes)
+                {
+                    currentLine.Add(currentCell.ToString());
+                    currentCell.Clear();
+                }
+                else if ((c == '\n' || c == '\r') && !inQuotes)
+                {
+                    if (c == '\r' && reader.Peek() == '\n')
+                        reader.Read();
+
+                    if (currentCell.Length > 0 || currentLine.Count > 0)
+                    {
+                        currentLine.Add(currentCell.ToString());
+                        result.Add(currentLine.ToArray());
+                        currentLine.Clear();
+                        currentCell.Clear();
+                    }
+                }
+                else
+                {
+                    currentCell.Append(c);
+                }
+            }
+
+            if (currentCell.Length > 0 || currentLine.Count > 0)
+            {
+                currentLine.Add(currentCell.ToString());
+                result.Add(currentLine.ToArray());
+            }
+        }
+
+        return result;
     }
 
     public CardInfo GetCard(string number)
