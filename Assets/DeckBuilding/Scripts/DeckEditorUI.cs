@@ -111,7 +111,7 @@ public class DeckEditorUI : MonoBehaviour
             btn.onClick.AddListener(() => RemoveCardFromDeck(info));
         }
 
-        deckCountText.text = currentDeck.Count + "/30";
+        deckCountText.text = "現在のデッキ枚数" + currentDeck.Count + "/30";
     }
 
 
