@@ -30,7 +30,7 @@ public class CardDatabase : MonoBehaviour
             return;
         }
 
-        var csvLines = ParseCsv(path).Take(63).ToList();
+        var csvLines = ParseCsv(path).Skip(1).Take(61).ToList();
 
         bool first = true;
         foreach (var cells in csvLines)
@@ -87,7 +87,15 @@ public class CardDatabase : MonoBehaviour
 
                 if (c == '"')
                 {
-                    inQuotes = !inQuotes;
+                    if (inQuotes && reader.Peek() == '"')
+                    {
+                        currentCell.Append('"');
+                        reader.Read();
+                    }
+                    else
+                    {
+                        inQuotes = !inQuotes;
+                    }
                 }
                 else if (c == ',' && !inQuotes)
                 {

@@ -9,8 +9,8 @@ public class DeckEditorUI : MonoBehaviour
     public Transform cardListParent;
     public Transform deckParent;
 
-    public GameObject listItemPrefab;   // 右側カード一覧用（画像1枚のPrefab）
-    public GameObject deckItemPrefab;   // 中央デッキ表示用（画像1枚のPrefab）
+    public GameObject listItemPrefab;
+    public GameObject deckItemPrefab;
 
     public CardDetailUI cardDetailUI;
 
@@ -22,13 +22,46 @@ public class DeckEditorUI : MonoBehaviour
     public TMP_Dropdown deckSelectDropdown;
 
     List<string> currentDeck = new();
-    DeckData loadingDeck;
-    int selectedDeckIndex = 0;
 
     void Start()
     {
         LoadDeckFromSave();
         RefreshCardList();
+        RefreshDeckDisplay();
+
+        // Dropdown変更時にデッキ切り替え
+        deckSelectDropdown.onValueChanged.AddListener(_ => OnDeckChanged());
+    }
+
+    void Update()
+    {
+        // Dキー：全デッキ削除
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            DeckSaveManager.Instance.ClearAllDecks();
+            LoadDeckFromSave();
+            RefreshDeckDisplay();
+            deckCountText.text = "全デッキを削除しました（Debug）";
+        }
+
+        // Fキー：選択中デッキ削除
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            int deckIndex = deckSelectDropdown.value;
+            DeckSaveManager.Instance.ClearDeck(deckIndex);
+            LoadDeckFromSave();
+            RefreshDeckDisplay();
+            deckCountText.text = $"デッキ{deckIndex + 1}を削除しました（Debug）";
+        }
+    }
+
+
+    //-------------------------------------------------------
+    // デッキ切り替え
+    //-------------------------------------------------------
+    void OnDeckChanged()
+    {
+        LoadDeckFromSave();
         RefreshDeckDisplay();
     }
 
@@ -37,10 +70,13 @@ public class DeckEditorUI : MonoBehaviour
     //-------------------------------------------------------
     void LoadDeckFromSave()
     {
-        selectedDeckIndex = deckSelectDropdown.value;
-        loadingDeck = DeckSaveManager.Instance.GetDeck(selectedDeckIndex);
+        int deckIndex = deckSelectDropdown.value;
+        var deck = DeckSaveManager.Instance.GetDeck(deckIndex);
 
-        currentDeck = new List<string>(loadingDeck.cardNumbers);
+        if (deck == null || deck.cardNumbers == null)
+            currentDeck = new List<string>();
+        else
+            currentDeck = new List<string>(deck.cardNumbers);
     }
 
     //-------------------------------------------------------
@@ -52,23 +88,16 @@ public class DeckEditorUI : MonoBehaviour
 
         foreach (var card in CardDatabase.Instance.cards)
         {
-            // 名前検索
-            if (!string.IsNullOrEmpty(nameSearchField.text))
-            {
-                if (!card.name.Contains(nameSearchField.text)) continue;
-            }
+            if (!string.IsNullOrEmpty(nameSearchField.text) &&
+                !card.name.Contains(nameSearchField.text))
+                continue;
 
-            // ★Prefabを生成（画像のみ）
             var obj = Instantiate(listItemPrefab, cardListParent);
 
-            // ★画像をセット
             obj.GetComponent<CardDisplayImageOnly>().SetCard(card);
 
-            // ★クリックでデッキに追加
             Button btn = obj.GetComponent<Button>();
             btn.onClick.AddListener(() => AddCardToDeck(card));
-
-            // ★詳細表示（左側）
             btn.onClick.AddListener(() => ShowDetail(card));
         }
     }
@@ -78,7 +107,6 @@ public class DeckEditorUI : MonoBehaviour
         RefreshCardList();
     }
 
-
     //-------------------------------------------------------
     // 左側：カード詳細
     //-------------------------------------------------------
@@ -86,7 +114,6 @@ public class DeckEditorUI : MonoBehaviour
     {
         cardDetailUI.Show(card);
     }
-
 
     //-------------------------------------------------------
     // 中央：デッキ表示
@@ -100,34 +127,25 @@ public class DeckEditorUI : MonoBehaviour
             var info = CardDatabase.Instance.GetCard(num);
             if (info == null) continue;
 
-            // ★デッキ用Prefab（画像だけ）生成
             var obj = Instantiate(deckItemPrefab, deckParent);
-
-            // ★画像セット
             obj.GetComponent<CardDisplayImageOnly>().SetCard(info);
 
-            // ★クリックでデッキから削除
             Button btn = obj.GetComponent<Button>();
             btn.onClick.AddListener(() => RemoveCardFromDeck(info));
         }
 
-        deckCountText.text = "現在のデッキ枚数" + currentDeck.Count + "/30";
+        deckCountText.text = $"現在のデッキ枚数 {currentDeck.Count}/30";
     }
 
-
     //-------------------------------------------------------
-    // カード追加・削除
+    // 追加 / 削除
     //-------------------------------------------------------
     public void AddCardToDeck(CardInfo card)
     {
-        // 30枚上限
         if (currentDeck.Count >= 30) return;
 
-        // 同名2枚制限
         int count = currentDeck.FindAll(x => x == card.number).Count;
         if (count >= 2) return;
-
-        // EX1/EX2 特別ルール（必要ならここに追加）
 
         currentDeck.Add(card.number);
         RefreshDeckDisplay();
@@ -139,23 +157,26 @@ public class DeckEditorUI : MonoBehaviour
         RefreshDeckDisplay();
     }
 
-
     //-------------------------------------------------------
-    // デッキ保存
+    // 保存
     //-------------------------------------------------------
     public void OnSaveButton()
     {
+        int deckIndex = deckSelectDropdown.value;
+
         if (currentDeck.Count != 30)
         {
             deckCountText.text = "デッキ枚数が30ではありません";
             return;
         }
 
-        DeckData data = new DeckData();
-        data.cardNumbers = new List<string>(currentDeck);
-        DeckSaveManager.Instance.SetDeck(selectedDeckIndex, data);
+        DeckData data = new DeckData
+        {
+            cardNumbers = new List<string>(currentDeck)
+        };
 
-        deckCountText.text = "保存しました";
+        DeckSaveManager.Instance.SetDeck(deckIndex, data);
+        deckCountText.text = $"デッキ{deckIndex + 1}をSAVEしました";
     }
 
     //-------------------------------------------------------
