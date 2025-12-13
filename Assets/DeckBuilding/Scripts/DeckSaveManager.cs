@@ -40,7 +40,8 @@ public class DeckSaveManager : MonoBehaviour
         {
             saveFile = new DeckSaveFile();
             for (int i = 0; i < 3; i++)
-                saveFile.decks.Add(new DeckData());
+                saveFile.decks.Add(new DeckData { cardNumbers = new List<string>() });
+            Save();
             return;
         }
 
@@ -59,5 +60,25 @@ public class DeckSaveManager : MonoBehaviour
         if (index < 0 || index >= saveFile.decks.Count) return;
         saveFile.decks[index] = data;
         Save();
+    }
+
+    // -----------------------------
+    // デバッグ用削除
+    // -----------------------------
+    public void ClearDeck(int index)
+    {
+        if (index < 0 || index >= saveFile.decks.Count) return;
+        saveFile.decks[index] = new DeckData { cardNumbers = new List<string>() };
+        Save();
+        Debug.Log($"Deck {index} cleared");
+    }
+
+    public void ClearAllDecks()
+    {
+        for (int i = 0; i < saveFile.decks.Count; i++)
+            saveFile.decks[i] = new DeckData { cardNumbers = new List<string>() };
+
+        Save();
+        Debug.Log("All decks cleared");
     }
 }
