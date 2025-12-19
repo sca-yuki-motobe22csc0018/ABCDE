@@ -538,10 +538,61 @@ MonoBehaviour:
   frontImage: {fileID: 1518302281}
   backImage: {fileID: 453655874}
   cardSprites:
-  - {fileID: -5018116575747410915, guid: 942038b3be644b340a9a5e9b692ebffd, type: 3}
-  - {fileID: -3423164737215403289, guid: 1906ab4b693940b46b7895b3a304c404, type: 3}
-  - {fileID: 532282208441007744, guid: 6c461b7f8ab85184f8bf92bc93fa2d22, type: 3}
-  - {fileID: -936152455767829942, guid: baac126579a9bd14d8e65b23ad64337c, type: 3}
+  - {fileID: 5620355365188860911, guid: a494341ac3303664d93cde18d3dac101, type: 3}
+  - {fileID: -2986480522433596089, guid: f8640883642b66848aead9add6a7bc30, type: 3}
+  - {fileID: -77511989929478714, guid: 491dd4f9a4ec43244b24e3b0d038c15f, type: 3}
+  - {fileID: 4268079810484271982, guid: f1ca5b5d5c5f7a042b28ccf6f2953c3f, type: 3}
+  - {fileID: -1409027860110786291, guid: 01b0b0d8bf12eee4eb9861ac339c46b7, type: 3}
+  - {fileID: -1122319918220441354, guid: cbcfbc4adfecc81478944a5bce1a3fd9, type: 3}
+  - {fileID: -1954674066036726120, guid: 60e371be7bfc92f4196f7ab0251468a4, type: 3}
+  - {fileID: -8185573351304925852, guid: 991a3240a3f69ce42a748d6eec3807d5, type: 3}
+  - {fileID: -614256152978075414, guid: 1c60f73fc37571f49b5fa4d97576b170, type: 3}
+  - {fileID: -4330266415641971182, guid: 33a1f08b9773aaa43aeb0cff46b85065, type: 3}
+  - {fileID: 6255424548773443938, guid: 5a332ff6d93f6e2459434873373fd5b3, type: 3}
+  - {fileID: -2807131512404312722, guid: 20d2f323617dd0341b7c6fa4a0b37fe2, type: 3}
+  - {fileID: -8596520376513825570, guid: ab06f0ee35e708044ac446911566ef5e, type: 3}
+  - {fileID: -1523477500510264325, guid: 8442379b3f517114090309573b26af30, type: 3}
+  - {fileID: -3472435481649918759, guid: 00f19dc834a879f49977c6490e39d3e9, type: 3}
+  - {fileID: 5626521724434569836, guid: f8dde1b6a5e0fc542857a6efb4724ffb, type: 3}
+  - {fileID: 4634250376757391974, guid: e6fb573a0d2eb6741b97c60cd75a4b73, type: 3}
+  - {fileID: -5690314236404921571, guid: ff03214c0954f8f4f96d57fd6d7428d9, type: 3}
+  - {fileID: 1967351381143167430, guid: 118ca53b234e8a64195eded7b872f06f, type: 3}
+  - {fileID: 489261675093434627, guid: 5e7a56b20ce2d4e469edb81304fd5082, type: 3}
+  - {fileID: 1948569981409731920, guid: 48399444f8aaad94dbe6c4523e48cc3c, type: 3}
+  - {fileID: -647549174962852254, guid: b56b02e0f265bb94a98586c293bcdcf4, type: 3}
+  - {fileID: -6791645276975231510, guid: c184c5e2487b0bf419f78fb10b804be6, type: 3}
+  - {fileID: -1978242454149541144, guid: 9d46d6ee6a36fd24eb92f46c58aa40f2, type: 3}
+  - {fileID: -1684194969647609972, guid: d3c160fee5744bc4b91ab001f5fb5e17, type: 3}
+  - {fileID: 8407195983737159362, guid: 132116098f2c4d640bfbee6bbc64adeb, type: 3}
+  - {fileID: -5116004941896417110, guid: 7c2f6a8d4b088ba42b337fff5419112c, type: 3}
+  - {fileID: 7690061793599786724, guid: fe18e6ce28289364e8a554656994f19b, type: 3}
+  - {fileID: 4875677897548988420, guid: 940ed6b088e6a194c8d9a6507ab24e85, type: 3}
+  - {fileID: -8949792961073722222, guid: 244909080aeb12846bd172144734a9ea, type: 3}
+  - {fileID: -6525543816726357004, guid: 5b262a8b08f7185429caba5283346761, type: 3}
+  - {fileID: -1143761086176771710, guid: df05bb2f01878d54aaa1f2ee99a52fa6, type: 3}
+  - {fileID: -2503257189847385489, guid: 54923e71dcee0df4cb16629f4a2f66ef, type: 3}
+  - {fileID: -5549502752317820048, guid: ab77749a3506c264ca5f2d23d9b9e1a8, type: 3}
+  - {fileID: 4652536001447388286, guid: 23440eae1dadca341b2ab6cc64c80b81, type: 3}
+  - {fileID: -4734175678591600380, guid: f1c1527e9f071594aaa8143d31363a21, type: 3}
+  - {fileID: 4705255155526694710, guid: 563f7666c6aee3646a645723204613ba, type: 3}
+  - {fileID: -6032550259036952847, guid: 09b91a1f0cb88474188161e774d986a6, type: 3}
+  - {fileID: 7419365402267641470, guid: ebdfcdb1b7ec79d42b3883b9175f5566, type: 3}
+  - {fileID: -6617292267388966455, guid: 07ef728b423cf824daeb44b657b93af2, type: 3}
+  - {fileID: -4537527720164903492, guid: 0b5497e2bf63d4e4f83c364eec785f8c, type: 3}
+  - {fileID: -3022798154899437590, guid: 135ae4efad8cbcc469676090b05e42c1, type: 3}
+  - {fileID: -1289756009767348939, guid: e00d752db8946e94ea4ca9b76e0a7b39, type: 3}
+  - {fileID: 1894801266041981911, guid: a391ba6210d54bc45805e55216215e95, type: 3}
+  - {fileID: 1158306130346257696, guid: b404cdf5fcffcc241a3d3ff11c6594c8, type: 3}
+  - {fileID: 1749928511879112067, guid: 13cf3dc40ceeb3a4f9ff05a7abc31071, type: 3}
+  - {fileID: -333100326110396786, guid: b087f9fbff8812b45b5c21782791885a, type: 3}
+  - {fileID: -6048200436775329053, guid: fa9a161a8ba1c9544a3fe4b245cb4619, type: 3}
+  - {fileID: 7873289920250806250, guid: faf93cfb9e73d264d9eeb4598cb33eaf, type: 3}
+  - {fileID: -1539919934493670205, guid: 74988c9f2eb129e4c84500af7e3c3342, type: 3}
+  - {fileID: 6837167181957187327, guid: 166e59f0e1f52bf44b09ea3d7930e6b3, type: 3}
+  - {fileID: -3581198582833394789, guid: 32a028608ae69894a95684e20cb6e6b9, type: 3}
+  - {fileID: 4063653299816344813, guid: 2a77ffc38d3812b4abd202238ac30aa1, type: 3}
+  - {fileID: -2351487210341166228, guid: b6178fae933b33e41aaeba9a2e051492, type: 3}
+  - {fileID: 923146308099839702, guid: 901e81c569ff6eb469ea5d51ff9e8372, type: 3}
   card: {fileID: 1977882158}
   buttons:
   - {fileID: 787164089}
@@ -886,7 +937,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 787164087}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 299541848}
+        m_TargetAssemblyTypeName: TitleManager, Assembly-CSharp
+        m_MethodName: BattleScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &901954952
 GameObject:
   m_ObjectHideFlags: 0
@@ -1036,7 +1099,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: Battle
 --- !u!222 &1134437915
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1441,7 +1504,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Button
+  m_Text: Deck
 --- !u!222 &1612053246
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1640,7 +1703,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1929958748}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 299541848}
+        m_TargetAssemblyTypeName: TitleManager, Assembly-CSharp
+        m_MethodName: DeckScene
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1942049902
 GameObject:
   m_ObjectHideFlags: 0

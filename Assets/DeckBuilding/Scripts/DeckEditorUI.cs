@@ -35,24 +35,25 @@ public class DeckEditorUI : MonoBehaviour
 
     void Update()
     {
-        // Dキー：全デッキ削除
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            DeckSaveManager.Instance.ClearAllDecks();
-            LoadDeckFromSave();
-            RefreshDeckDisplay();
-            deckCountText.text = "全デッキを削除しました（Debug）";
-        }
+        //デバック用
+        //// Dキー：全デッキ削除
+        //if (Input.GetKeyDown(KeyCode.D))
+        //{
+        //    DeckSaveManager.Instance.ClearAllDecks();
+        //    LoadDeckFromSave();
+        //    RefreshDeckDisplay();
+        //    deckCountText.text = "全デッキを削除しました（Debug）";
+        //}
 
-        // Fキー：選択中デッキ削除
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            int deckIndex = deckSelectDropdown.value;
-            DeckSaveManager.Instance.ClearDeck(deckIndex);
-            LoadDeckFromSave();
-            RefreshDeckDisplay();
-            deckCountText.text = $"デッキ{deckIndex + 1}を削除しました（Debug）";
-        }
+        //// Fキー：選択中デッキ削除
+        //if (Input.GetKeyDown(KeyCode.F))
+        //{
+        //    int deckIndex = deckSelectDropdown.value;
+        //    DeckSaveManager.Instance.ClearDeck(deckIndex);
+        //    LoadDeckFromSave();
+        //    RefreshDeckDisplay();
+        //    deckCountText.text = $"デッキ{deckIndex + 1}を削除しました（Debug）";
+        //}
     }
 
 
@@ -94,7 +95,7 @@ public class DeckEditorUI : MonoBehaviour
 
             var obj = Instantiate(listItemPrefab, cardListParent);
 
-            obj.GetComponent<CardDisplayImageOnly>().SetCard(card);
+            obj.GetComponent<CardDisplayImageOnly>().SetCard(card, this);
 
             Button btn = obj.GetComponent<Button>();
             btn.onClick.AddListener(() => AddCardToDeck(card));
@@ -128,7 +129,7 @@ public class DeckEditorUI : MonoBehaviour
             if (info == null) continue;
 
             var obj = Instantiate(deckItemPrefab, deckParent);
-            obj.GetComponent<CardDisplayImageOnly>().SetCard(info);
+            obj.GetComponent<CardDisplayImageOnly>().SetCard(info, this);
 
             Button btn = obj.GetComponent<Button>();
             btn.onClick.AddListener(() => RemoveCardFromDeck(info));
@@ -185,7 +186,11 @@ public class DeckEditorUI : MonoBehaviour
     public void OnResetButton()
     {
         currentDeck.Clear();
+        int deckIndex = deckSelectDropdown.value;
+        DeckSaveManager.Instance.ClearDeck(deckIndex);
+        LoadDeckFromSave();
         RefreshDeckDisplay();
+        deckCountText.text = $"デッキ{deckIndex + 1}をResetしました";
     }
 
     //-------------------------------------------------------
@@ -193,6 +198,6 @@ public class DeckEditorUI : MonoBehaviour
     //-------------------------------------------------------
     public void OnCloseButton()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Title");
     }
 }
