@@ -9,12 +9,12 @@ public class CardDropArea : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        var drag = eventData.pointerDrag?.GetComponent<CardDragHandler>();
-        if (drag == null) return;
+        //var drag = eventData.pointerDrag?.GetComponent<CardDragHandler>();
+        //if (drag == null) return;
 
-        if (dropType == DropType.AddToDeck)
-            editor.AddCardToDeck(drag.card);
-        else
-            editor.RemoveCardFromDeck(drag.card);
+        //if (dropType == DropType.AddToDeck)
+        //    editor.AddCardToDeck(drag.card);
+        //else
+        //    editor.RemoveCardFromDeck(drag.card);
     }
 }

@@ -15,6 +15,8 @@ public class TitleManager : MonoBehaviour
     public Button[] buttons;
     public RectTransform[] buttonTargetPos;
 
+    public static bool isFirstLaunch = true;
+
     private int lastIndex = -1;
     private float clickStartAlpha = 0.2f;
     private float alphaTime = 1.0f;
@@ -32,12 +34,23 @@ public class TitleManager : MonoBehaviour
 
     void Start()
     {
-        frontImage.enabled = true;
-        backImage.enabled = false;
+        if (isFirstLaunch)
+        {
+            // 通常の演出あり起動
+            frontImage.enabled = true;
+            backImage.enabled = false;
 
-        ChangeRandomSprite();
-        Fade();
-        LoopRotation();
+            ChangeRandomSprite();
+            Fade();
+            LoopRotation();
+
+            isFirstLaunch = false; // ★ 次回以降は演出しない
+        }
+        else
+        {
+            // ★ 演出なし：完成状態を即作る
+            SetupCompletedState();
+        }
     }
 
     void Update()
@@ -239,6 +252,61 @@ public class TitleManager : MonoBehaviour
                 backImage.enabled = false;
 
             });
+    }
+    private void SetupCompletedState()
+    {
+        // ★ すべてのTweenを停止
+        DOTween.KillAll();
+
+        // ===== カードの表示を完全復元 =====
+        card.transform.rotation = Quaternion.identity;
+
+        frontImage.enabled = true;
+        backImage.enabled = false;
+
+        // ★ Alpha を必ず 1 に戻す
+        Color frontColor = frontImage.color;
+        frontColor.a = 1f;
+        frontImage.color = frontColor;
+
+        Color backColor = backImage.color;
+        backColor.a = 1f;
+        backImage.color = backColor;
+
+        // 表イラストを1回ランダム設定
+        ChangeRandomSprite();
+
+        // ===== タイトル・クリックスタートは非表示 =====
+        SetAlpha(title, 0f);
+        SetAlpha(clickStart, 0f);
+
+        // ===== ボタンを完成位置へ即配置 =====
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (i >= buttonTargetPos.Length) break;
+
+            RectTransform btnRect = buttons[i].GetComponent<RectTransform>();
+            btnRect.anchoredPosition = buttonTargetPos[i].anchoredPosition;
+        }
+
+        clickCheck = false;
+        isStopped = true;
+    }
+    private void SetAlpha(Graphic g, float a)
+    {
+        Color c = g.color;
+        c.a = a;
+        g.color = c;
+    }
+
+    public void BattleScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+    }
+
+    public void DeckScene()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("DeckBuilding");
     }
 
     public void gameEnd()
