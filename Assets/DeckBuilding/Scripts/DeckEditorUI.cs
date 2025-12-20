@@ -177,13 +177,16 @@ public class DeckEditorUI : MonoBehaviour
         };
 
         DeckSaveManager.Instance.SetDeck(deckIndex, data);
+
         deckCountText.text = $"デッキ{deckIndex + 1}をSAVEしました";
     }
 
-    //-------------------------------------------------------
-    // リセット
-    //-------------------------------------------------------
-    public void OnResetButton()
+
+
+//-------------------------------------------------------
+// リセット
+//-------------------------------------------------------
+public void OnResetButton()
     {
         currentDeck.Clear();
         int deckIndex = deckSelectDropdown.value;

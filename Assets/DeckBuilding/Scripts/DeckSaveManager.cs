@@ -8,6 +8,7 @@ public class DeckSaveManager : MonoBehaviour
     public static DeckSaveManager Instance;
 
     string fileName = "decks.json";
+    const string SELECTED_DECK_KEY = "SelectedDeckIndex";
 
     [Serializable]
     public class DeckSaveFile
@@ -60,6 +61,25 @@ public class DeckSaveManager : MonoBehaviour
         if (index < 0 || index >= saveFile.decks.Count) return;
         saveFile.decks[index] = data;
         Save();
+    }
+
+    //--------------------------------------------------
+    // ★使用するデッキを指定
+    //--------------------------------------------------
+    public void SetSelectedDeck(int index)
+    {
+        PlayerPrefs.SetInt(SELECTED_DECK_KEY, index);
+        PlayerPrefs.Save();
+
+        Debug.Log($"Selected Deck = {index + 1}");
+    }
+
+    //--------------------------------------------------
+    // ★使用するデッキ番号を取得
+    //--------------------------------------------------
+    public int GetSelectedDeckIndex()
+    {
+        return PlayerPrefs.GetInt(SELECTED_DECK_KEY, 0);
     }
 
     // -----------------------------

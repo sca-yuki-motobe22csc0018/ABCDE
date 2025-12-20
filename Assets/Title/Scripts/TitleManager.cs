@@ -301,7 +301,7 @@ public class TitleManager : MonoBehaviour
 
     public void BattleScene()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Main");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Home");
     }
 
     public void DeckScene()
