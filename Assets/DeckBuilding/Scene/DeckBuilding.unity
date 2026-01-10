@@ -1046,6 +1046,9 @@ MonoBehaviour:
   cardDetailUI: {fileID: 2018365874}
   deckCountText: {fileID: 109573129}
   nameSearchField: {fileID: 2053664035}
+  minCostDropdown: {fileID: 1540346587}
+  maxCostDropdown: {fileID: 1775791506}
+  typeDropdown: {fileID: 1517052774}
   deckSelectDropdown: {fileID: 1947175942}
 --- !u!1 &201028622
 GameObject:
@@ -6377,7 +6380,7 @@ MonoBehaviour:
   m_MultiSelect: 0
   m_Options:
     m_Options:
-    - m_Text: Any
+    - m_Text: All
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
     - m_Text: A
@@ -6998,7 +7001,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1636752810
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7014,9 +7017,9 @@ RectTransform:
   - {fileID: 268548545}
   m_Father: {fileID: 892888850}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 416.6667, y: -15}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1636752811
@@ -7843,7 +7846,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 316.80002, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 350, y: 500}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1854937936
@@ -9558,7 +9561,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Any
+  m_text: All
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: fe2af28e9a7912240836125747b057d1, type: 2}
   m_sharedMaterial: {fileID: -5155498531246187155, guid: fe2af28e9a7912240836125747b057d1, type: 2}
@@ -9674,7 +9677,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 325, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2053664033
 MonoBehaviour:
